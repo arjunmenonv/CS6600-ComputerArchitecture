@@ -18,6 +18,8 @@ typedef enum {OPEN_PAGE, CLOSE_PAGE} policy_t;
 // State Variables used in AdapPage:
 int counter[MAX_NUM_CHANNELS][MAX_NUM_RANKS][MAX_NUM_BANKS];
 policy_t curr_policy[MAX_NUM_CHANNELS][MAX_NUM_RANKS][MAX_NUM_BANKS];
+// track recently accessed cols and precharge them when empty (pseudo closed page)
+int recent_colacc[MAX_NUM_CHANNELS][MAX_NUM_RANKS][MAX_NUM_BANKS];
 
 void init_scheduler_vars(){
 	// initialize all scheduler variables here:
@@ -161,8 +163,7 @@ void schedule(int channel){
 					if(is_autoprecharge_allowed(channel, rank, bank))
 						issue_autoprecharge(channel, rank, bank);
 						*/
-						if(is_precharge_allowed(channel, rank, bank))
-							issue_precharge_command(channel, rank, bank);
+
 				}
 			}
 		}
