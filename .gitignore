@@ -1,0 +1,4 @@
+object/*.o
+bin/usimm
+input/traces/
+src/.ccls-cache/
