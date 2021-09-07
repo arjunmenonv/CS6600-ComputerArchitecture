@@ -32,7 +32,7 @@ void init_scheduler_vars(){
 			}
 		}
 	}
-	printf("init sched vars ended\n");
+	//printf("init sched vars ended\n");
 	return;
 }
 
@@ -66,7 +66,7 @@ int drain_writes[MAX_NUM_CHANNELS];
    Before issuing a command it is important to check if it is issuable. For the RD/WR queue resident commands, checking the "command_issuable" flag is necessary. To check if the other commands (mentioned above) can be issued, it is important to check one of the following functions: is_precharge_allowed, is_all_bank_precharge_allowed, is_powerdown_fast_allowed, is_powerdown_slow_allowed, is_powerup_allowed, is_refresh_allowed, is_autoprecharge_allowed, is_activate_allowed.
    */
 
-/* 
+/*
  * Input: Variable to indicate Cache Hit or Miss; PrevPolicy; HighThresh, LowThresh
  * Output: Policy var (open/closed)
 */
@@ -80,7 +80,7 @@ policy_t get_policy(int channel, int rank, int bank, int hit, policy_t curr_poli
 			next_policy = CLOSE_PAGE;
 		else
 			next_policy = OPEN_PAGE;
-	} 
+	}
 	else{
 		if(hit && (counter[channel][rank][bank] > 0))
 			counter[channel][rank][bank]--;
@@ -89,11 +89,11 @@ policy_t get_policy(int channel, int rank, int bank, int hit, policy_t curr_poli
 		else
 			next_policy = CLOSE_PAGE;
 	}
-	printf("get_policy ended. Policy is:");
-	if(next_policy == OPEN_PAGE)
+	//printf("get_policy ended. Policy is:");
+	/*if(next_policy == OPEN_PAGE)
 		printf("Open page\n");
 	else
-		printf("Close page\n");
+		printf("Close page\n");*/
 	return next_policy;
 }
 
@@ -120,7 +120,7 @@ void schedule(int channel){
 	// elements (already arranged in the order of arrival), and
 	// issue the command for the first request that is ready
 	if(drain_writes[channel]){
-		printf("In write drain\n");
+		//printf("In write drain\n");
 		LL_FOREACH(write_queue_head[channel], wr_ptr){
 			int bank = wr_ptr->dram_addr.bank;
 			int rank = wr_ptr->dram_addr.rank;
@@ -159,7 +159,7 @@ void schedule(int channel){
 	// command can be issued in this cycle and issue it
 	// Simple FCFS
 	if(!drain_writes[channel]){
-		printf("In read drain\n");
+		//printf("In read drain\n");
 		LL_FOREACH(read_queue_head[channel],rd_ptr){
 			int bank = rd_ptr->dram_addr.bank;
 			int rank = rd_ptr->dram_addr.rank;
@@ -182,7 +182,7 @@ void schedule(int channel){
 					if (rd_ptr->next_command == PRE_CMD)
 						recent_colacc[channel][rank][bank] = 0;
 
-					issue_request_command(wr_ptr);
+					issue_request_command(rd_ptr);
 					if(recent_colacc[channel][rank][bank])
 						if(is_precharge_allowed(channel, rank, bank))
 							if(issue_precharge_command(channel, rank, bank))
