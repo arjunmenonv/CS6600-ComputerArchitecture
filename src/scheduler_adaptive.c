@@ -143,7 +143,7 @@ void schedule(int channel){
 						int row_buffer_hit = (row == dram_state[channel][rank][bank].active_row) ? 1:0;
 						curr_policy[channel] = get_policy(channel, row_buffer_hit, curr_policy[channel]);
 						if(rd_ptr->command_issuable){
-								if(curr_policy[channel]){
+								if(curr_policy[channel] == OPEN_PAGE){
 										issue_request_command(rd_ptr);
 										break;
 								}
