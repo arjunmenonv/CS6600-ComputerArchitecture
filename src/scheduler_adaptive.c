@@ -18,6 +18,7 @@ typedef enum {OPEN_PAGE, CLOSE_PAGE} policy_t;
 // State Variables used in AdapPage:
 int counter[MAX_NUM_CHANNELS][MAX_NUM_RANKS][MAX_NUM_BANKS];
 policy_t curr_policy[MAX_NUM_CHANNELS][MAX_NUM_RANKS][MAX_NUM_BANKS];
+int recent_colacc[MAX_NUM_CHANNELS][MAX_NUM_RANKS][MAX_NUM_BANKS];
 
 void init_scheduler_vars(){
 	// initialize all scheduler variables here:
@@ -27,9 +28,11 @@ void init_scheduler_vars(){
 			for(int k = 0; k < MAX_NUM_CHANNELS; k++){
 				counter[i][j][k] = (int)(HIGH_THRESH + LOW_THRESH)/2;
 				curr_policy[i][j][k] = OPEN_PAGE;
+				recent_colacc[i][j][k] = 0;
 			}
 		}
 	}
+	printf("init sched vars ended\n");
 	return;
 }
 
@@ -86,6 +89,11 @@ policy_t get_policy(int channel, int rank, int bank, int hit, policy_t curr_poli
 		else
 			next_policy = CLOSE_PAGE;
 	}
+	printf("get_policy ended. Policy is:");
+	if(next_policy == OPEN_PAGE)
+		printf("Open page\n");
+	else
+		printf("Close page\n");
 	return next_policy;
 }
 
@@ -112,6 +120,7 @@ void schedule(int channel){
 	// elements (already arranged in the order of arrival), and
 	// issue the command for the first request that is ready
 	if(drain_writes[channel]){
+		printf("In write drain\n");
 		LL_FOREACH(write_queue_head[channel], wr_ptr){
 			int bank = wr_ptr->dram_addr.bank;
 			int rank = wr_ptr->dram_addr.rank;
@@ -125,13 +134,24 @@ void schedule(int channel){
 					break;
 				}
 				else{
+					/* Before issuing the command, see if this bank is now a candidate for closure (if it just did a column-rd/wr).
+					If the bank just did an activate or precharge, it is not a candidate for closure. */
+					if (wr_ptr->next_command == COL_WRITE_CMD)
+						recent_colacc[channel][rank][bank] = 1;
+					if (wr_ptr->next_command == ACT_CMD)
+						recent_colacc[channel][rank][bank] = 0;
+					if (wr_ptr->next_command == PRE_CMD)
+						recent_colacc[channel][rank][bank] = 0;
+
 					issue_request_command(wr_ptr);
-					if(is_autoprecharge_allowed(channel, rank, bank))
-						issue_autoprecharge(channel, rank, bank);
+					if(recent_colacc[channel][rank][bank])
+						if(issue_autoprecharge(channel, rank, bank))
+							recent_colacc[channel][rank][bank] = 0;
+
+					break;
 				}
 			}
 		}
-		return;
 	}
 
 	// Draining Reads
@@ -139,6 +159,7 @@ void schedule(int channel){
 	// command can be issued in this cycle and issue it
 	// Simple FCFS
 	if(!drain_writes[channel]){
+		printf("In read drain\n");
 		LL_FOREACH(read_queue_head[channel],rd_ptr){
 			int bank = rd_ptr->dram_addr.bank;
 			int rank = rd_ptr->dram_addr.rank;
@@ -152,13 +173,24 @@ void schedule(int channel){
 					break;
 				}
 				else{
-					issue_request_command(rd_ptr);
-					if(is_autoprecharge_allowed(channel, rank, bank))
-						issue_autoprecharge(channel, rank, bank);
+					/* Before issuing the command, see if this bank is now a candidate for closure (if it just did a column-rd/wr).
+					If the bank just did an activate or precharge, it is not a candidate for closure. */
+					if (rd_ptr->next_command == COL_READ_CMD)
+						recent_colacc[channel][rank][bank] = 1;
+					if (rd_ptr->next_command == ACT_CMD)
+						recent_colacc[channel][rank][bank] = 0;
+					if (rd_ptr->next_command == PRE_CMD)
+						recent_colacc[channel][rank][bank] = 0;
+
+					issue_request_command(wr_ptr);
+					if(recent_colacc[channel][rank][bank])
+						if(is_precharge_allowed(channel, rank, bank))
+							if(issue_precharge_command(channel, rank, bank))
+								recent_colacc[channel][rank][bank] = 0;
+					break;
 				}
 			}
 		}
-		return;
 	}
 }
 
