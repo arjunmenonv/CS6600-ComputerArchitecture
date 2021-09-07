@@ -149,8 +149,8 @@ void schedule(int channel)
 	for (i=0; i<NUM_RANKS; i++) {    /* For all ranks in channel */
 		for (j=0; j<NUM_BANKS; j++) {  /* For all banks on the channel.. */
 			if (recent_colacc[channel][i][j]) {  /* See if this bank is a candidate. */
-				if (is_autoprecharge_allowed(channel,i,j)) {  /* See if precharge is doable. */
-					if (issue_autoprecharge(channel,i,j)) {
+				if (is_precharge_allowed(channel,i,j)) {  /* See if precharge is doable. */
+					if (issue_precharge_command(channel,i,j)) {
 						num_aggr_precharge++;
 						recent_colacc[channel][i][j] = 0;
 					}
