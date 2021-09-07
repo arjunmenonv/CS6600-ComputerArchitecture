@@ -16,17 +16,21 @@ extern long long int CYCLE_VAL;
 typedef enum {OPEN_PAGE, CLOSE_PAGE} policy_t;
 
 // State Variables used in AdapPage:
-int counter[MAX_NUM_CHANNELS];
-policy_t curr_policy[MAX_NUM_CHANNELS];
+int counter[MAX_NUM_CHANNELS][MAX_NUM_RANKS][MAX_NUM_BANKS];
+policy_t curr_policy[MAX_NUM_CHANNELS][MAX_NUM_RANKS][MAX_NUM_BANKS];
 
 void init_scheduler_vars(){
-		// initialize all scheduler variables here:
-		// Initially ctr between HighThresh and LowThresh, use open page policy
-		for(int i = 0; i < MAX_NUM_CHANNELS; i++){
-				counter[i] = (int)(HIGH_THRESH + LOW_THRESH)/2;
-				curr_policy[i] = OPEN_PAGE;
+	// initialize all scheduler variables here:
+	// Initially ctr between HighThresh and LowThresh, use open page policy
+	for(int i = 0; i < MAX_NUM_CHANNELS; i++){
+		for(int j = 0; j < MAX_NUM_CHANNELS; j++){
+			for(int k = 0; k < MAX_NUM_CHANNELS; k++){
+				counter[i][j][k] = (int)(HIGH_THRESH + LOW_THRESH)/2;
+				curr_policy[i][j][k] = OPEN_PAGE;
+			}
 		}
-		return;
+	}
+	return;
 }
 
 // write queue high water mark; begin draining writes if write queue exceeds this value
@@ -63,99 +67,99 @@ int drain_writes[MAX_NUM_CHANNELS];
  * Input: Variable to indicate Cache Hit or Miss; PrevPolicy; HighThresh, LowThresh
  * Output: Policy var (open/closed)
 */
-policy_t get_policy(int channel, int hit, policy_t curr_policy){
-		policy_t next_policy;
+policy_t get_policy(int channel, int rank, int bank, int hit, policy_t curr_policy){
+	policy_t next_policy;
 
-		if (curr_policy == OPEN_PAGE){
-				if(!(hit) && (counter[channel] < 15))
-						counter[channel]++;
-				if(counter[channel] > HIGH_THRESH)
-						next_policy = CLOSE_PAGE;
-				else
-						next_policy = OPEN_PAGE;
-		} 
-		else{
-				if(hit && (counter[channel] > 0))
-						counter[channel]--;
-				if(counter[channel] < LOW_THRESH)
-						next_policy = OPEN_PAGE;
-				else
-						next_policy = CLOSE_PAGE;
-		}
-		return next_policy;
+	if (curr_policy == OPEN_PAGE){
+		if(!(hit) && (counter[channel][rank][bank] < 15))
+			counter[channel][rank][bank]++;
+		if(counter[channel][rank][bank] > HIGH_THRESH)
+			next_policy = CLOSE_PAGE;
+		else
+			next_policy = OPEN_PAGE;
+	} 
+	else{
+		if(hit && (counter[channel][rank][bank] > 0))
+			counter[channel][rank][bank]--;
+		if(counter[channel][rank][bank] < LOW_THRESH)
+			next_policy = OPEN_PAGE;
+		else
+			next_policy = CLOSE_PAGE;
+	}
+	return next_policy;
 }
 
 void schedule(int channel){
-		request_t * rd_ptr = NULL;
-		request_t * wr_ptr = NULL;
+	request_t * rd_ptr = NULL;
+	request_t * wr_ptr = NULL;
 
-		// if in write drain mode, keep draining writes until the
-		// write queue occupancy drops to LO_WM
-		if (drain_writes[channel] && (write_queue_length[channel] > LO_WM))
-				drain_writes[channel] = 1; // Keep draining.
-		else
-				drain_writes[channel] = 0; // No need to drain.
+	// if in write drain mode, keep draining writes until the
+	// write queue occupancy drops to LO_WM
+	if (drain_writes[channel] && (write_queue_length[channel] > LO_WM))
+		drain_writes[channel] = 1; // Keep draining.
+	else
+		drain_writes[channel] = 0; // No need to drain.
 
-		// initiate write drain if either the write queue occupancy
-		// has reached the HI_WM , OR, if there are no pending read
-		// requests
-		if(write_queue_length[channel] > HI_WM)
-				drain_writes[channel] = 1;
-		else if (!read_queue_length[channel])
-				drain_writes[channel] = 1;
+	// initiate write drain if either the write queue occupancy
+	// has reached the HI_WM , OR, if there are no pending read
+	// requests
+	if(write_queue_length[channel] > HI_WM)
+		drain_writes[channel] = 1;
+	else if (!read_queue_length[channel])
+		drain_writes[channel] = 1;
 
-		// If in write drain mode, look through all the write queue
-		// elements (already arranged in the order of arrival), and
-		// issue the command for the first request that is ready
-		if(drain_writes[channel]){
-				LL_FOREACH(write_queue_head[channel], wr_ptr){
-						int bank = wr_ptr->dram_addr.bank;
-						int rank = wr_ptr->dram_addr.rank;
-						int row = wr_ptr->dram_addr.row;
+	// If in write drain mode, look through all the write queue
+	// elements (already arranged in the order of arrival), and
+	// issue the command for the first request that is ready
+	if(drain_writes[channel]){
+		LL_FOREACH(write_queue_head[channel], wr_ptr){
+			int bank = wr_ptr->dram_addr.bank;
+			int rank = wr_ptr->dram_addr.rank;
+			int row = wr_ptr->dram_addr.row;
 
-						int row_buffer_hit = (row == dram_state[channel][rank][bank].active_row) ? 1:0;
-						curr_policy[channel] = get_policy(channel, row_buffer_hit, curr_policy[channel]);
-						if(wr_ptr->command_issuable){
-								if(curr_policy[channel] == OPEN_PAGE){
-										issue_request_command(wr_ptr);
-										break;
-								}
-								else{
-										issue_request_command(wr_ptr);
-										if(is_autoprecharge_allowed(channel, rank, bank))
-												issue_autoprecharge(channel, rank, bank);
-								}
-						}
+			int row_buffer_hit = (row == dram_state[channel][rank][bank].active_row) ? 1:0;
+			curr_policy[channel][rank][bank] = get_policy(channel, rank, bank, row_buffer_hit, curr_policy[channel][rank][bank]);
+			if(wr_ptr->command_issuable){
+				if(curr_policy[channel][rank][bank] == OPEN_PAGE){
+					issue_request_command(wr_ptr);
+					break;
 				}
-				return;
-		}
-
-		// Draining Reads
-		// look through the queue and find the first request whose
-		// command can be issued in this cycle and issue it
-		// Simple FCFS
-		if(!drain_writes[channel]){
-				LL_FOREACH(read_queue_head[channel],rd_ptr){
-						int bank = rd_ptr->dram_addr.bank;
-						int rank = rd_ptr->dram_addr.rank;
-						int row = rd_ptr->dram_addr.row;
-
-						int row_buffer_hit = (row == dram_state[channel][rank][bank].active_row) ? 1:0;
-						curr_policy[channel] = get_policy(channel, row_buffer_hit, curr_policy[channel]);
-						if(rd_ptr->command_issuable){
-								if(curr_policy[channel] == OPEN_PAGE){
-										issue_request_command(rd_ptr);
-										break;
-								}
-								else{
-										issue_request_command(rd_ptr);
-										if(is_autoprecharge_allowed(channel, rank, bank))
-												issue_autoprecharge(channel, rank, bank);
-								}
-								return;
-						}
+				else{
+					issue_request_command(wr_ptr);
+					if(is_autoprecharge_allowed(channel, rank, bank))
+						issue_autoprecharge(channel, rank, bank);
 				}
+			}
 		}
+		return;
+	}
+
+	// Draining Reads
+	// look through the queue and find the first request whose
+	// command can be issued in this cycle and issue it
+	// Simple FCFS
+	if(!drain_writes[channel]){
+		LL_FOREACH(read_queue_head[channel],rd_ptr){
+			int bank = rd_ptr->dram_addr.bank;
+			int rank = rd_ptr->dram_addr.rank;
+			int row = rd_ptr->dram_addr.row;
+
+			int row_buffer_hit = (row == dram_state[channel][rank][bank].active_row) ? 1:0;
+			curr_policy[channel][rank][bank] = get_policy(channel, rank, bank, row_buffer_hit, curr_policy[channel][rank][bank]);
+			if(rd_ptr->command_issuable){
+				if(curr_policy[channel][rank][bank] == OPEN_PAGE){
+					issue_request_command(rd_ptr);
+					break;
+				}
+				else{
+					issue_request_command(rd_ptr);
+					if(is_autoprecharge_allowed(channel, rank, bank))
+						issue_autoprecharge(channel, rank, bank);
+				}
+			}
+		}
+		return;
+	}
 }
 
 void scheduler_stats(){
