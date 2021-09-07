@@ -63,7 +63,7 @@ int drain_writes[MAX_NUM_CHANNELS];
    Before issuing a command it is important to check if it is issuable. For the RD/WR queue resident commands, checking the "command_issuable" flag is necessary. To check if the other commands (mentioned above) can be issued, it is important to check one of the following functions: is_precharge_allowed, is_all_bank_precharge_allowed, is_powerdown_fast_allowed, is_powerdown_slow_allowed, is_powerup_allowed, is_refresh_allowed, is_autoprecharge_allowed, is_activate_allowed.
    */
 
-/* 
+/*
  * Input: Variable to indicate Cache Hit or Miss; PrevPolicy; HighThresh, LowThresh
  * Output: Policy var (open/closed)
 */
@@ -77,7 +77,7 @@ policy_t get_policy(int channel, int rank, int bank, int hit, policy_t curr_poli
 			next_policy = CLOSE_PAGE;
 		else
 			next_policy = OPEN_PAGE;
-	} 
+	}
 	else{
 		if(hit && (counter[channel][rank][bank] > 0))
 			counter[channel][rank][bank]--;
@@ -125,6 +125,8 @@ void schedule(int channel){
 					break;
 				}
 				else{
+					// Debug:
+					printf("Issued CLOSED_PAGE Write at cycle: %lld \n", CYCLE_VAL);
 					issue_request_command(wr_ptr);
 					if(is_autoprecharge_allowed(channel, rank, bank))
 						issue_autoprecharge(channel, rank, bank);
@@ -152,9 +154,15 @@ void schedule(int channel){
 					break;
 				}
 				else{
+					// Debug:
+					printf("Issued CLOSED_PAGE Read at cycle: %lld \n", CYCLE_VAL);
 					issue_request_command(rd_ptr);
+					/*
 					if(is_autoprecharge_allowed(channel, rank, bank))
 						issue_autoprecharge(channel, rank, bank);
+						*/
+						if(is_precharge_allowed(channel, rank, bank))
+							issue_precharge_command(channel, rank, bank);
 				}
 			}
 		}

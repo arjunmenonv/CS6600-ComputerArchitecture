@@ -1,4 +1,4 @@
-bin/usimm input/4channel.cfg input/black input/black input/black input/black > output/bl-bl-bl-bl-4 
+bin/usimm input/4channel.cfg ../traces/black ../traces/black ../traces/black ../traces/black > output/bl-bl-bl-bl-4 
 
 #bin/usimm input/1channel.cfg input/comm2 > output/c2-1 &
 #bin/usimm input/1channel.cfg input/comm1 input/comm1 > output/c1-c1-1 &
