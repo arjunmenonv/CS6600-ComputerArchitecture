@@ -27,4 +27,3 @@ $(OBJDIR)/scheduler-close.o: scheduler-close.c scheduler-close.h utlist.h utils.
 
 clean:
 	rm -f $(BINDIR)/$(OUT) $(OBJS)
-

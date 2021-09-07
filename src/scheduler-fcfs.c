@@ -25,7 +25,7 @@ int drain_writes[MAX_NUM_CHANNELS];
 /* Each cycle it is possible to issue a valid command from the read or write queues
    OR
    a valid precharge command to any bank (issue_precharge_command())
-   OR
+   OR 
    a valid precharge_all bank command to a rank (issue_all_bank_precharge_command())
    OR
    a power_down command (issue_powerdown_command()), programmed either for fast or slow exit mode
@@ -89,8 +89,8 @@ void schedule(int channel)
 
 	// Draining Reads
 	// look through the queue and find the first request whose
-	// command can be issued in this cycle and issue it
-	// Simple FCFS
+	// command can be issued in this cycle and issue it 
+	// Simple FCFS 
 	if(!drain_writes[channel])
 	{
 		LL_FOREACH(read_queue_head[channel],rd_ptr)
@@ -109,3 +109,4 @@ void scheduler_stats()
 {
   /* Nothing to print for now. */
 }
+

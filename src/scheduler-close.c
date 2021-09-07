@@ -121,8 +121,8 @@ void schedule(int channel)
 
 	// Draining Reads
 	// look through the queue and find the first request whose
-	// command can be issued in this cycle and issue it 
-	// Simple FCFS 
+	// command can be issued in this cycle and issue it
+	// Simple FCFS
 	if(!drain_writes[channel])
 	{
 		LL_FOREACH(read_queue_head[channel],rd_ptr)
@@ -167,4 +167,3 @@ void scheduler_stats()
   /* Nothing to print for now. */
   printf("Number of aggressive precharges: %lld\n", num_aggr_precharge);
 }
-

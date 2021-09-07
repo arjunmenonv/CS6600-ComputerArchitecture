@@ -6,14 +6,14 @@
 #include "processor.h"
 #include "configfile.h"
 #include "memory_controller.h"
-#include "scheduler.h"
+#include "scheduler_adaptive.h"
 #include "params.h"
 
 #define MAXTRACELINESIZE 64
 long long int BIGNUM = 1000000;
 
 
-int expt_done=0;  
+int expt_done=0;
 
 long long int CYCLE_VAL=0;
 
@@ -39,12 +39,11 @@ float core_power=0;
 
 int main(int argc, char * argv[])
 {
-  
   printf("---------------------------------------------\n");
   printf("-- USIMM: the Utah SImulated Memory Module --\n");
   printf("--              Version: 1.3               --\n");
   printf("---------------------------------------------\n");
-  
+
   int numc=0;
   int num_ret=0;
   int num_fetch=0;
@@ -126,7 +125,7 @@ int main(int argc, char * argv[])
 	     printf("Poor set of input parameters.  Input file %s starts with \"MT\", but there is no preceding input file starting with \"MT0\".  Quitting.\n", argv[numc+2]);
 	     return -6;
 	   }
-	   else 
+	   else
 	     prefixtable[numc] = currMTapp;
 	 }
        }
@@ -229,7 +228,7 @@ int main(int argc, char * argv[])
       num_ret = 0;
       while ((num_ret < MAX_RETIRE) && ROB[numc].inflight) {
         /* Keep retiring until retire width is consumed or ROB is empty. */
-        if (ROB[numc].comptime[ROB[numc].head] < CYCLE_VAL) {  
+        if (ROB[numc].comptime[ROB[numc].head] < CYCLE_VAL) {
 	  /* Keep retiring instructions if they are done. */
 	  ROB[numc].head = (ROB[numc].head + 1) % ROBSIZE;
 	  ROB[numc].inflight--;
@@ -243,17 +242,17 @@ int main(int argc, char * argv[])
 
 
     if(CYCLE_VAL%PROCESSOR_CLK_MULTIPLIER == 0)
-    { 
+    {
       /* Execute function to find ready instructions. */
       update_memory();
 
       /* Execute user-provided function to select ready instructions for issue. */
-      /* Based on this selection, update DRAM data structures and set 
+      /* Based on this selection, update DRAM data structures and set
 	 instruction completion times. */
       for(int c=0; c < NUM_CHANNELS; c++)
       {
 	schedule(c);
-	gather_stats(c);	
+	gather_stats(c);
       }
     }
 
@@ -293,8 +292,8 @@ int main(int argc, char * argv[])
 	          ROB[numc].optype[ROB[numc].tail] = opertype[numc];
 	          ROB[numc].comptime[ROB[numc].tail] = CYCLE_VAL + BIGNUM;
 	          ROB[numc].instrpc[ROB[numc].tail] = instrpc[numc];
-		
-		  // Check to see if the read is for buffered data in write queue - 
+
+		  // Check to see if the read is for buffered data in write queue -
 		  // return constant latency if match in WQ
 		  // add in read queue otherwise
 		  int lat = read_matches_write_or_read_queue(addr[numc]);
@@ -369,7 +368,7 @@ int main(int argc, char * argv[])
 	        ROB[numc].tracedone=1;
 	        break;  /* Break out of the while loop fetching instructions. */
 	      }
-	      
+
 	  }  /* Done consuming the next rd or wr. */
 
 	} /* One iteration of the fetch while loop done. */
@@ -437,7 +436,7 @@ int main(int argc, char * argv[])
   printf("Num writes merged: %lld\n",num_write_merge);
   /* Print all other memory system stats. */
   scheduler_stats();
-  print_stats();  
+  print_stats();
 
   /*Print Cycle Stats*/
   for(int c=0; c<NUM_CHANNELS; c++)
@@ -474,10 +473,3 @@ int main(int argc, char * argv[])
 
   return 0;
 }
-
-
-
-
-
-
-

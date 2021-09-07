@@ -11,7 +11,7 @@
 #include "scheduler.h"
 #include "processor.h"
 
-// ROB Structure, used to release stall on instructions 
+// ROB Structure, used to release stall on instructions
 // when the read request completes
 extern struct robstructure * ROB;
 
@@ -22,7 +22,7 @@ extern long long int CYCLE_VAL;
 
 #define BIG_ACTIVATION_WINDOW 1000000
 
-// moving window that captures each activate issued in the past 
+// moving window that captures each activate issued in the past
 int activation_record[MAX_NUM_CHANNELS][MAX_NUM_RANKS][BIG_ACTIVATION_WINDOW];
 
 // record an activate in the activation record
@@ -30,11 +30,11 @@ void record_activate(int channel, int rank, long long int cycle)
 {
 	assert(activation_record[channel][rank][(cycle%BIG_ACTIVATION_WINDOW)] == 0); //can't have two commands issued the same cycle - hence no two activations in the same cycle
 	activation_record[channel][rank][(cycle%BIG_ACTIVATION_WINDOW)]=1;
-	
+
 	return;
 }
 
-// Have there been 3 or less activates in the last T_FAW period 
+// Have there been 3 or less activates in the last T_FAW period
 int is_T_FAW_met(int channel,int rank, int cycle)
 {
 	int start = cycle;
@@ -68,7 +68,7 @@ void flush_activate_record(int channel, int rank, long long int cycle)
 {
 	if(cycle >= T_FAW+PROCESSOR_CLK_MULTIPLIER)
 	{
-	  for(int i=1; i<=PROCESSOR_CLK_MULTIPLIER ;i++) 
+	  for(int i=1; i<=PROCESSOR_CLK_MULTIPLIER ;i++)
 		activation_record[channel][rank][(cycle-T_FAW-i)%BIG_ACTIVATION_WINDOW] = 0; // make sure cycle >tFAW
 	}
 
@@ -105,7 +105,7 @@ void init_memory_controller_vars()
 				stats_num_read[i][j][k]=0;
 				stats_num_write[i][j][k]=0;
 				cas_issued_current_cycle[i][j][k]=0;
-				
+
 			}
 
 			cmd_all_bank_precharge_issuable[i][j] =0;
@@ -119,7 +119,7 @@ void init_memory_controller_vars()
 			forced_refresh_mode_on[i][j]=0;
 			refresh_issue_deadline[i][j] = next_refresh_completion_deadline[i][j] - T_RP - 8*T_RFC;
 			num_issued_refreshes[i][j] = 0;
-		
+
 			stats_time_spent_in_active_power_down[i][j]=0;
 			stats_time_spent_in_precharge_power_down_slow[i][j]=0;
 			stats_time_spent_in_precharge_power_down_fast[i][j]=0;
@@ -179,7 +179,7 @@ unsigned int log_base2(unsigned int new_value)
 }
 
 // Function to decompose the incoming DRAM address into the
-// constituent channel, rank, bank, row and column ids. 
+// constituent channel, rank, bank, row and column ids.
 // Note : To prevent memory leaks, call free() on the pointer returned
 // by this function after you have used the return value.
 dram_address_t * calc_dram_addr(long long int physical_address)
@@ -208,38 +208,13 @@ dram_address_t * calc_dram_addr(long long int physical_address)
 
 	if(ADDRESS_MAPPING == 1)
 	{
-		temp_b = input_a;				
+		temp_b = input_a;
 		input_a = input_a >> colBitWidth;
 		temp_a  = input_a << colBitWidth;
 		this_a->column = temp_a ^ temp_b;		//strip out the column address
-		
-
-		temp_b = input_a;   				
-		input_a = input_a >> channelBitWidth;
-		temp_a  = input_a << channelBitWidth;
-		this_a->channel = temp_a ^ temp_b; 		// strip out the channel address
 
 
-		temp_b = input_a;				
-		input_a = input_a >> bankBitWidth;
-		temp_a  = input_a << bankBitWidth;
-		this_a->bank = temp_a ^ temp_b;		// strip out the bank address 
-
-
-		temp_b = input_a;			
-		input_a = input_a >> rankBitWidth;
-		temp_a  = input_a << rankBitWidth;
-		this_a->rank = temp_a ^ temp_b;     		// strip out the rank address
-
-
-		temp_b = input_a;		
-		input_a = input_a >> rowBitWidth;
-		temp_a  = input_a << rowBitWidth;
-		this_a->row = temp_a ^ temp_b;		// strip out the row number
-	}
-	else
-	{
-		temp_b = input_a;   	
+		temp_b = input_a;
 		input_a = input_a >> channelBitWidth;
 		temp_a  = input_a << channelBitWidth;
 		this_a->channel = temp_a ^ temp_b; 		// strip out the channel address
@@ -248,7 +223,32 @@ dram_address_t * calc_dram_addr(long long int physical_address)
 		temp_b = input_a;
 		input_a = input_a >> bankBitWidth;
 		temp_a  = input_a << bankBitWidth;
-		this_a->bank = temp_a ^ temp_b;		// strip out the bank address 
+		this_a->bank = temp_a ^ temp_b;		// strip out the bank address
+
+
+		temp_b = input_a;
+		input_a = input_a >> rankBitWidth;
+		temp_a  = input_a << rankBitWidth;
+		this_a->rank = temp_a ^ temp_b;     		// strip out the rank address
+
+
+		temp_b = input_a;
+		input_a = input_a >> rowBitWidth;
+		temp_a  = input_a << rowBitWidth;
+		this_a->row = temp_a ^ temp_b;		// strip out the row number
+	}
+	else
+	{
+		temp_b = input_a;
+		input_a = input_a >> channelBitWidth;
+		temp_a  = input_a << channelBitWidth;
+		this_a->channel = temp_a ^ temp_b; 		// strip out the channel address
+
+
+		temp_b = input_a;
+		input_a = input_a >> bankBitWidth;
+		temp_a  = input_a << bankBitWidth;
+		this_a->bank = temp_a ^ temp_b;		// strip out the bank address
 
 
 		temp_b = input_a;
@@ -378,7 +378,7 @@ int write_exists_in_write_queue(long long int physical_address)
 	dram_address_t * this_addr = calc_dram_addr(physical_address);
 	int channel = this_addr->channel;
 	free(this_addr);
-	
+
 	request_t * wr_ptr = NULL;
 
 	LL_FOREACH(write_queue_head[channel], wr_ptr)
@@ -414,7 +414,7 @@ request_t * insert_read(long long int physical_address, long long int arrival_ti
 	read_queue_length[channel] ++;
 
 	//UT_MEM_DEBUG("\nCyc: %lld New READ:%lld Core:%d Chan:%d Rank:%d Bank:%d Row:%lld RD_Q_Length:%lld\n", CYCLE_VAL, new_node->id, new_node->thread_id, new_node->dram_addr.channel,  new_node->dram_addr.rank,  new_node->dram_addr.bank,  new_node->dram_addr.row, read_queue_length[channel]);
-	
+
 	return new_node;
 }
 
@@ -451,9 +451,9 @@ void update_read_queue_commands(int channel)
 	LL_FOREACH(read_queue_head[channel],curr)
 	{
 		// ignore the requests whose completion time has been determined
-		// these requests will be removed this very cycle 
+		// these requests will be removed this very cycle
 		if(curr->request_served == 1)
-			continue; 
+			continue;
 
 		int bank = curr->dram_addr.bank;
 
@@ -470,7 +470,7 @@ void update_read_queue_commands(int channel)
 			case PRECHARGING:
 			case REFRESHING:
 
-			  
+
 				curr->next_command = ACT_CMD;
 
 
@@ -478,7 +478,7 @@ void update_read_queue_commands(int channel)
 					curr->command_issuable = 1;
 				else
 					curr->command_issuable = 0;
-				
+
 				// check if we are in OR too close to the forced refresh period
 				if(forced_refresh_mode_on[channel][rank] || ((CYCLE_VAL + T_RAS) > refresh_issue_deadline[channel][rank]))
 					curr->command_issuable = 0;
@@ -494,12 +494,12 @@ void update_read_queue_commands(int channel)
 				if(row == dram_state[channel][rank][bank].active_row)
 				{
 					curr->next_command = COL_READ_CMD;
-					
+
 					if(CYCLE_VAL >= dram_state[channel][rank][bank].next_read)
 						curr->command_issuable = 1;
 					else
 						curr->command_issuable = 0;
-					
+
 					if(forced_refresh_mode_on[channel][rank] ||((CYCLE_VAL + T_RTP) > refresh_issue_deadline[channel][rank]))
 						curr->command_issuable = 0;
 				}
@@ -511,12 +511,12 @@ void update_read_queue_commands(int channel)
 						curr->command_issuable = 1;
 					else
 						curr->command_issuable = 0;
-					
+
 					if(forced_refresh_mode_on[channel][rank]|| ((CYCLE_VAL+T_RP) > refresh_issue_deadline[channel][rank]))
 						curr->command_issuable = 0;
 
 				}
-				
+
 				break;
 				// if the chip was powered, down the
 				// next command required is power_up
@@ -531,7 +531,7 @@ void update_read_queue_commands(int channel)
 					curr->command_issuable = 1;
 				else
 					curr->command_issuable=0;
-				
+
 				if((dram_state[channel][rank][bank].state == PRECHARGE_POWER_DOWN_SLOW) && ((CYCLE_VAL + T_XP_DLL) > refresh_issue_deadline[channel][rank] ))
 					curr->command_issuable = 0;
 				else if(((dram_state[channel][rank][bank].state == PRECHARGE_POWER_DOWN_FAST) || (dram_state[channel][rank][bank].state == ACTIVE_POWER_DOWN)) && ((CYCLE_VAL + T_XP) > refresh_issue_deadline[channel][rank] ))
@@ -554,8 +554,8 @@ void update_write_queue_commands(int channel)
 	{
 
 		if(curr->request_served == 1)
-			continue; 
-		
+			continue;
+
 		int bank = curr->dram_addr.bank;
 
 		int rank = curr->dram_addr.rank;
@@ -573,7 +573,7 @@ void update_write_queue_commands(int channel)
 					curr->command_issuable = 1;
 				else
 					curr->command_issuable = 0;
-				
+
 				// check if we are in or too close to the forced refresh period
 				if(forced_refresh_mode_on[channel][rank] || ((CYCLE_VAL + T_RAS) > refresh_issue_deadline[channel][rank]))
 					curr->command_issuable = 0;
@@ -608,8 +608,8 @@ void update_write_queue_commands(int channel)
 						curr->command_issuable = 0;
 
 				}
-				
-				
+
+
 				break;
 
 			case PRECHARGE_POWER_DOWN_SLOW:
@@ -648,7 +648,7 @@ void clean_queues(int channel)
 	request_t * wrt_tmp = NULL;
 
 	// Delete all READ requests whose completion time has been determined i.e. COL_RD has been issued
-	LL_FOREACH_SAFE(read_queue_head[channel],rd_ptr,rd_tmp) 
+	LL_FOREACH_SAFE(read_queue_head[channel],rd_ptr,rd_tmp)
 	{
 		if(rd_ptr->request_served == 1)
 		{
@@ -671,7 +671,7 @@ void clean_queues(int channel)
 	}
 
 	// Delete all WRITE requests whose completion time has been determined i.e COL_WRITE has been issued
-	LL_FOREACH_SAFE(write_queue_head[channel],wrt_ptr,wrt_tmp) 
+	LL_FOREACH_SAFE(write_queue_head[channel],wrt_ptr,wrt_tmp)
 	{
 		if(wrt_ptr->request_served == 1)
 		{
@@ -698,7 +698,7 @@ void clean_queues(int channel)
 // Upon issuing the request, the dram_state is changed and the
 // next_"cmd" variables are updated to indicate when the next "cmd"
 // can be issued to each bank
-int issue_request_command(request_t * request) 
+int issue_request_command(request_t * request)
 {
 	long long int cycle =  CYCLE_VAL;
 	if(request->command_issuable != 1 || command_issued_current_cycle[request->dram_addr.channel])
@@ -727,10 +727,10 @@ int issue_request_command(request_t * request)
 			dram_state[channel][rank][bank].active_row = row;
 
 			dram_state[channel][rank][bank].next_pre = max((cycle + T_RAS) , dram_state[channel][rank][bank].next_pre);
-			
+
 			dram_state[channel][rank][bank].next_refresh = max((cycle + T_RAS) , dram_state[channel][rank][bank].next_refresh);
 
-			dram_state[channel][rank][bank].next_read = max(cycle + T_RCD, dram_state[channel][rank][bank].next_read); 
+			dram_state[channel][rank][bank].next_read = max(cycle + T_RCD, dram_state[channel][rank][bank].next_read);
 
 			dram_state[channel][rank][bank].next_write = max(cycle + T_RCD,  dram_state[channel][rank][bank].next_write);
 
@@ -763,7 +763,7 @@ int issue_request_command(request_t * request)
 			assert(dram_state[channel][rank][bank].state == ROW_ACTIVE) ;
 
 			dram_state[channel][rank][bank].next_pre = max(cycle + T_RTP , dram_state[channel][rank][bank].next_pre);
-			
+
 			dram_state[channel][rank][bank].next_refresh = max(cycle + T_RTP , dram_state[channel][rank][bank].next_refresh);
 
 			dram_state[channel][rank][bank].next_powerdown = max (cycle+T_RTP, dram_state[channel][rank][bank].next_powerdown);
@@ -776,7 +776,7 @@ int issue_request_command(request_t * request)
 						dram_state[channel][i][j].next_read = max(cycle+ T_DATA_TRANS + T_RTRS, dram_state[channel][i][j].next_read);
 
 					else
-						dram_state[channel][i][j].next_read = max(cycle + max(T_CCD, T_DATA_TRANS), dram_state[channel][i][j].next_read); 
+						dram_state[channel][i][j].next_read = max(cycle + max(T_CCD, T_DATA_TRANS), dram_state[channel][i][j].next_read);
 
 					dram_state[channel][i][j].next_write = max(cycle + T_CAS+ T_DATA_TRANS + T_RTRS- T_CWD ,  dram_state[channel][i][j].next_write);
 				}
@@ -797,7 +797,7 @@ int issue_request_command(request_t * request)
 			stats_average_read_queue_latency[channel] = ((stats_reads_completed[channel]-1)*stats_average_read_queue_latency[channel] + (request->dispatch_time - request->arrival_time))/stats_reads_completed[channel];
 			//UT_MEM_DEBUG("Req:%lld finishes at Cycle: %lld\n", request->id, request->completion_time);
 
-			//printf("Cycle: %10lld, Reads  Completed = %5lld, this_latency= %5lld, latency = %f\n", CYCLE_VAL, stats_reads_completed[channel], request->latency, stats_average_read_latency[channel]);	
+			//printf("Cycle: %10lld, Reads  Completed = %5lld, this_latency= %5lld, latency = %f\n", CYCLE_VAL, stats_reads_completed[channel], request->latency, stats_average_read_latency[channel]);
 
 			stats_num_read[channel][rank][bank] ++;
 
@@ -819,7 +819,7 @@ int issue_request_command(request_t * request)
 			//UT_MEM_DEBUG("\nCycle: %lld Cmd: COL_WRITE Req:%lld Chan:%d Rank:%d Bank:%d \n", CYCLE_VAL, request->id, channel, rank, bank);
 
 			dram_state[channel][rank][bank].next_pre = max(cycle + T_CWD +T_DATA_TRANS + T_WR, dram_state[channel][rank][bank].next_pre);
-			
+
 			dram_state[channel][rank][bank].next_refresh = max(cycle + T_CWD +T_DATA_TRANS + T_WR, dram_state[channel][rank][bank].next_refresh);
 
 			dram_state[channel][rank][bank].next_powerdown = max (cycle + T_CWD + T_DATA_TRANS + T_WR, dram_state[channel][rank][bank].next_powerdown);
@@ -836,7 +836,7 @@ int issue_request_command(request_t * request)
 					}
 					else
 					{
-						dram_state[channel][i][j].next_write = max(cycle + max(T_CCD, T_DATA_TRANS), dram_state[channel][i][j].next_write); 
+						dram_state[channel][i][j].next_write = max(cycle + max(T_CCD, T_DATA_TRANS), dram_state[channel][i][j].next_write);
 
 						dram_state[channel][i][j].next_read = max(cycle + T_CWD + T_DATA_TRANS + T_WTR ,  dram_state[channel][i][j].next_read);
 					}
@@ -852,12 +852,12 @@ int issue_request_command(request_t * request)
 			stats_writes_completed[channel]++;
 
 			stats_num_write[channel][rank][bank]++;
-			
+
 			stats_average_write_latency[channel] = ((stats_writes_completed[channel]-1)*stats_average_write_latency[channel] + request->latency)/stats_writes_completed[channel];
 			stats_average_write_queue_latency[channel] = ((stats_writes_completed[channel]-1)*stats_average_write_queue_latency[channel] + (request->dispatch_time - request->arrival_time))/stats_writes_completed[channel];
 			//UT_MEM_DEBUG("Req:%lld finishes at Cycle: %lld\n", request->id, request->completion_time);
 
-			//printf("Cycle: %10lld, Writes Completed = %5lld, this_latency= %5lld, latency = %f\n", CYCLE_VAL, stats_writes_completed[channel], request->latency, stats_average_write_latency[channel]);	
+			//printf("Cycle: %10lld, Writes Completed = %5lld, this_latency= %5lld, latency = %f\n", CYCLE_VAL, stats_writes_completed[channel], request->latency, stats_average_write_latency[channel]);
 
 
 			for(int i=0; i<NUM_RANKS ;i++)
@@ -939,7 +939,7 @@ int issue_request_command(request_t * request)
 					dram_state[channel][rank][i].next_write = max(cycle+T_XP, dram_state[channel][rank][i].next_write);
 
 					dram_state[channel][rank][i].next_act = max(cycle+T_XP, dram_state[channel][rank][i].next_act);
-					
+
 					dram_state[channel][rank][i].next_refresh = max(cycle + T_XP, dram_state[channel][rank][i].next_refresh);
 				}
 			}
@@ -960,7 +960,7 @@ int issue_request_command(request_t * request)
 }
 
 // Function called to see if the rank can be transitioned into a fast low
-// power state - ACT_PDN or PRE_PDN_FAST. 
+// power state - ACT_PDN or PRE_PDN_FAST.
 int is_powerdown_fast_allowed(int channel, int rank)
 {
 	int flag =0;
@@ -968,7 +968,7 @@ int is_powerdown_fast_allowed(int channel, int rank)
 	// if already a command has been issued this cycle, or if
 	// forced refreshes are underway, or if issuing this command
 	// will cause us to miss the refresh deadline, do not allow it
-	if (command_issued_current_cycle[channel] || forced_refresh_mode_on[channel][rank] || (CYCLE_VAL +T_PD_MIN + T_XP > refresh_issue_deadline[channel][rank])) 
+	if (command_issued_current_cycle[channel] || forced_refresh_mode_on[channel][rank] || (CYCLE_VAL +T_PD_MIN + T_XP > refresh_issue_deadline[channel][rank]))
 	  return 0;
 
 	// command can be allowed if the next_powerdown is met for all banks in the rank
@@ -989,7 +989,7 @@ int is_powerdown_slow_allowed(int channel, int rank)
 {
 	int flag =0;
 
-	if (command_issued_current_cycle[channel] || forced_refresh_mode_on[channel][rank] || (CYCLE_VAL +T_PD_MIN+T_XP_DLL > refresh_issue_deadline[channel][rank])) 
+	if (command_issued_current_cycle[channel] || forced_refresh_mode_on[channel][rank] || (CYCLE_VAL +T_PD_MIN+T_XP_DLL > refresh_issue_deadline[channel][rank]))
 	  return 0;
 
 	// Sleep command can be allowed if the next_powerdown is met for all banks in the rank
@@ -1033,11 +1033,11 @@ int is_powerup_allowed(int channel, int rank)
 // Function to see if the bank can be activated or not
 int is_activate_allowed(int channel, int rank, int bank)
 {
-	if (command_issued_current_cycle[channel] || forced_refresh_mode_on[channel][rank] || (CYCLE_VAL + T_RAS > refresh_issue_deadline[channel][rank])) 
+	if (command_issued_current_cycle[channel] || forced_refresh_mode_on[channel][rank] || (CYCLE_VAL + T_RAS > refresh_issue_deadline[channel][rank]))
 	  return 0;
 	if ((dram_state[channel][rank][bank].state == IDLE || dram_state[channel][rank][bank].state == PRECHARGING || dram_state[channel][rank][bank].state == REFRESHING) && (CYCLE_VAL >= dram_state[channel][rank][bank].next_act) && (is_T_FAW_met(channel,rank,CYCLE_VAL)))
 	  return 1;
-	else 
+	else
 	  return 0;
 }
 
@@ -1049,7 +1049,7 @@ int is_autoprecharge_allowed(int channel, int rank, int bank)
     start_precharge = max(CYCLE_VAL + T_RTP, dram_state[channel][rank][bank].next_pre);
   else
     start_precharge = max(CYCLE_VAL + T_CWD + T_DATA_TRANS + T_WR, dram_state[channel][rank][bank].next_pre);
-  
+
   if(((cas_issued_current_cycle[channel][rank][bank] == 1) && ((start_precharge+T_RP) <= refresh_issue_deadline[channel][rank])) ||((cas_issued_current_cycle[channel][rank][bank] == 2)&& ((start_precharge+T_RP) <= refresh_issue_deadline[channel][rank])))
     return 1;
   else
@@ -1060,7 +1060,7 @@ int is_autoprecharge_allowed(int channel, int rank, int bank)
 // Function to see if the rank can be precharged or not
 int is_precharge_allowed(int channel, int rank, int bank)
 {
-	if (command_issued_current_cycle[channel] || forced_refresh_mode_on[channel][rank] || (CYCLE_VAL + T_RP > refresh_issue_deadline[channel][rank])) 
+	if (command_issued_current_cycle[channel] || forced_refresh_mode_on[channel][rank] || (CYCLE_VAL + T_RP > refresh_issue_deadline[channel][rank]))
 	    return 0;
 
 	if((dram_state[channel][rank][bank].state == ROW_ACTIVE || dram_state[channel][rank][bank].state == IDLE || dram_state[channel][rank][bank].state == PRECHARGING || dram_state[channel][rank][bank].state ==  REFRESHING) && ( CYCLE_VAL >= dram_state[channel][rank][bank].next_pre))
@@ -1074,7 +1074,7 @@ int is_precharge_allowed(int channel, int rank, int bank)
 int is_all_bank_precharge_allowed(int channel, int rank)
 {
   	int flag = 0;
-	if (command_issued_current_cycle[channel] || forced_refresh_mode_on[channel][rank] || (CYCLE_VAL + T_RP > refresh_issue_deadline[channel][rank])) 
+	if (command_issued_current_cycle[channel] || forced_refresh_mode_on[channel][rank] || (CYCLE_VAL + T_RP > refresh_issue_deadline[channel][rank]))
 	  return 0;
 
 	for(int i =0; i<NUM_BANKS ;i++)
@@ -1091,7 +1091,7 @@ int is_all_bank_precharge_allowed(int channel, int rank)
 
 int is_refresh_allowed(int channel, int rank)
 {
-	if (command_issued_current_cycle[channel] || forced_refresh_mode_on[channel][rank]) 
+	if (command_issued_current_cycle[channel] || forced_refresh_mode_on[channel][rank])
 	  return 0;
 
 	for(int b=0; b< NUM_BANKS; b++)
@@ -1128,7 +1128,7 @@ int issue_powerdown_command(int channel, int rank, command_t cmd)
 	        // next_powerup and refresh times
 		dram_state[channel][rank][i].next_powerup = max(CYCLE_VAL+T_PD_MIN, dram_state[channel][rank][i].next_powerdown);
 		dram_state[channel][rank][i].next_refresh = max(CYCLE_VAL+T_PD_MIN, dram_state[channel][rank][i].next_refresh);
-		
+
 		// state change
 		if(dram_state[channel][rank][i].state == IDLE || dram_state[channel][rank][i].state == PRECHARGING || dram_state[channel][rank][i].state == REFRESHING)
 		{
@@ -1158,7 +1158,7 @@ int issue_powerdown_command(int channel, int rank, command_t cmd)
 // Function to power a rank up
 int issue_powerup_command(int channel, int rank)
 {
-	if(!is_powerup_allowed(channel,rank)) 
+	if(!is_powerup_allowed(channel,rank))
 	{
 		printf("PANIC : SCHED_ERROR: POWER_UP command not issuable in cycle:%lld\n", CYCLE_VAL);
 		return 0;
@@ -1244,11 +1244,11 @@ int issue_autoprecharge(int channel, int rank, int bank)
 
     stats_num_precharge[channel][rank][bank] ++;
 
-    // reset the cas_issued_current_cycle 
+    // reset the cas_issued_current_cycle
     for(int r = 0; r < NUM_RANKS ; r++)
       for(int b = 0; b < NUM_BANKS ; b++)
 	cas_issued_current_cycle[channel][r][b]=0;
-	  
+
 
     return 1;
   }
@@ -1274,7 +1274,7 @@ int issue_activate_command(int channel, int rank, int bank, long long int row)
 
     dram_state[channel][rank][bank].next_refresh = max((cycle + T_RAS) , dram_state[channel][rank][bank].next_refresh);
 
-    dram_state[channel][rank][bank].next_read = max(cycle + T_RCD, dram_state[channel][rank][bank].next_read); 
+    dram_state[channel][rank][bank].next_read = max(cycle + T_RCD, dram_state[channel][rank][bank].next_read);
 
     dram_state[channel][rank][bank].next_write = max(cycle + T_RCD,  dram_state[channel][rank][bank].next_write);
 
@@ -1307,20 +1307,28 @@ int issue_precharge_command(int channel, int rank, int bank)
 {
 	if(!is_precharge_allowed(channel, rank, bank))
 	{
-	  printf("PANIC : SCHED_ERROR: PRECHARGE command not issuable in cycle:%lld\n", CYCLE_VAL);
-	  return 0;
+		printf("PANIC : SCHED_ERROR: PRECHARGE command not issuable in cycle:%lld\n", CYCLE_VAL);
+		return 0;
 	}
 	else
 	{
-	  dram_state[channel][rank][bank].state = PRECHARGING;
-	  dram_state[channel][rank][bank].active_row = -1;
-	  dram_state[channel][rank][bank].next_act = max(CYCLE_VAL+T_RP, dram_state[channel][rank][bank].next_act);
-	  dram_state[channel][rank][bank].next_powerdown = max(CYCLE_VAL+T_RP, dram_state[channel][rank][bank].next_powerdown);
-	  dram_state[channel][rank][bank].next_pre = max(CYCLE_VAL+T_RP, dram_state[channel][rank][bank].next_pre);
-	  dram_state[channel][rank][bank].next_refresh = max(CYCLE_VAL+T_RP, dram_state[channel][rank][bank].next_refresh);
-	  stats_num_precharge[channel][rank][bank]++;
-	  command_issued_current_cycle[channel] = 1;	
-	  return 1;
+		dram_state[channel][rank][bank].state = PRECHARGING;
+
+		dram_state[channel][rank][bank].active_row = -1;
+
+		dram_state[channel][rank][bank].next_act = max(CYCLE_VAL+T_RP, dram_state[channel][rank][bank].next_act);
+
+		dram_state[channel][rank][bank].next_powerdown = max(CYCLE_VAL+T_RP, dram_state[channel][rank][bank].next_powerdown);
+
+		dram_state[channel][rank][bank].next_pre = max(CYCLE_VAL+T_RP, dram_state[channel][rank][bank].next_pre);
+
+		dram_state[channel][rank][bank].next_refresh = max(CYCLE_VAL+T_RP, dram_state[channel][rank][bank].next_refresh);
+
+		stats_num_precharge[channel][rank][bank]++;
+
+		command_issued_current_cycle[channel] = 1;
+
+		return 1;
 	}
 }
 
@@ -1329,18 +1337,18 @@ int issue_all_bank_precharge_command(int channel, int rank)
 {
 	if(!is_all_bank_precharge_allowed(channel, rank))
 	{
-	  printf("PANIC : SCHED_ERROR: ALL_BANK_PRECHARGE command not issuable in cycle:%lld\n", CYCLE_VAL);
-	  return 0;
+		printf("PANIC : SCHED_ERROR: ALL_BANK_PRECHARGE command not issuable in cycle:%lld\n", CYCLE_VAL);
+		return 0;
 	}
 	else
 	{
-	  for(int i =0;i<NUM_BANKS; i++)
-	  {
-	    issue_precharge_command(channel,rank,i);
-	    command_issued_current_cycle[channel] = 0; /* Since issue_precharge_command would have set this, we need to reset it. */
-	  }
-	  command_issued_current_cycle[channel] = 1;
-	  return 1;
+		for(int i =0;i<NUM_BANKS; i++)
+		{
+			issue_precharge_command(channel,rank,i);
+			command_issued_current_cycle[channel] = 0; /* Since issue_precharge_command would have set this, we need to reset it. */
+		}
+		command_issued_current_cycle[channel] = 1;
+		return 1;
 	}
 }
 
@@ -1372,10 +1380,10 @@ int issue_refresh_command(int channel,int rank)
 		{
 		  for(int b=0; b<NUM_BANKS ; b++)
 		  {
-		    dram_state[channel][rank][b].next_act = max(cycle + T_XP + T_RFC, dram_state[channel][rank][b].next_act);
-		    dram_state[channel][rank][b].next_pre = max(cycle + T_XP + T_RFC, dram_state[channel][rank][b].next_pre);
-		    dram_state[channel][rank][b].next_refresh = max(cycle + T_XP + T_RFC, dram_state[channel][rank][b].next_refresh);
-		    dram_state[channel][rank][b].next_powerdown = max(cycle + T_XP + T_RFC, dram_state[channel][rank][b].next_powerdown);
+					dram_state[channel][rank][b].next_act = max(cycle + T_XP + T_RFC, dram_state[channel][rank][b].next_act);
+					dram_state[channel][rank][b].next_pre = max(cycle + T_XP + T_RFC, dram_state[channel][rank][b].next_pre);
+					dram_state[channel][rank][b].next_refresh = max(cycle + T_XP + T_RFC, dram_state[channel][rank][b].next_refresh);
+					dram_state[channel][rank][b].next_powerdown = max(cycle + T_XP + T_RFC, dram_state[channel][rank][b].next_powerdown);
 		  }
 		}
 		else if(dram_state[channel][rank][0].state == ACTIVE_POWER_DOWN)
@@ -1413,18 +1421,18 @@ int issue_refresh_command(int channel,int rank)
 		  {
 		    for(int b=0; b<NUM_BANKS ; b++)
 		    {
-		      dram_state[channel][rank][b].next_act = max(cycle + T_RFC, dram_state[channel][rank][b].next_act);
-		      dram_state[channel][rank][b].next_pre = max(cycle + T_RFC, dram_state[channel][rank][b].next_pre);
-		      dram_state[channel][rank][b].next_refresh = max(cycle + T_RFC, dram_state[channel][rank][b].next_refresh);
-		      dram_state[channel][rank][b].next_powerdown = max(cycle + T_RFC, dram_state[channel][rank][b].next_powerdown);
+		    dram_state[channel][rank][b].next_act = max(cycle + T_RFC, dram_state[channel][rank][b].next_act);
+		    dram_state[channel][rank][b].next_pre = max(cycle + T_RFC, dram_state[channel][rank][b].next_pre);
+		    dram_state[channel][rank][b].next_refresh = max(cycle + T_RFC, dram_state[channel][rank][b].next_refresh);
+		    dram_state[channel][rank][b].next_powerdown = max(cycle + T_RFC, dram_state[channel][rank][b].next_powerdown);
 		    }
 		  }
 
 		}
 		for(int b=0; b<NUM_BANKS ; b++)
 		{
-		  dram_state[channel][rank][b].active_row = -1;
-		  dram_state[channel][rank][b].state = REFRESHING;
+			dram_state[channel][rank][b].active_row = -1;
+			dram_state[channel][rank][b].state = REFRESHING;
 		}
 		command_issued_current_cycle[channel] = 1;
 		return 1;
@@ -1459,7 +1467,7 @@ void gather_stats(int channel)
 			  ;
 		else if(dram_state[channel][i][0].state == ACTIVE_POWER_DOWN)
 			stats_time_spent_in_active_power_down[channel][i]+=PROCESSOR_CLK_MULTIPLIER;
-		else 
+		else
 		{
 			for(int b=0; b<NUM_BANKS; b++)
 			{
@@ -1500,7 +1508,7 @@ void print_stats(int channel)
 				write_cmds += stats_num_write[c][r][b];
 			}
 		}
-		
+
 		printf("-------- Channel %d Stats-----------\n",c);
 		printf("Total Reads Serviced :          %-7lld\n", stats_reads_completed[c]);
 		printf("Total Writes Serviced :         %-7lld\n", stats_writes_completed[c]);
@@ -1522,7 +1530,7 @@ void update_issuable_commands(int channel)
 			cmd_precharge_issuable[channel][rank][bank] = is_precharge_allowed(channel,rank,bank);
 
 		cmd_all_bank_precharge_issuable[channel][rank] = is_all_bank_precharge_allowed(channel, rank) ;
-		
+
 		cmd_powerdown_fast_issuable[channel][rank] =  is_powerdown_fast_allowed(channel, rank);
 
 		cmd_powerdown_slow_issuable[channel][rank] =  is_powerdown_slow_allowed(channel, rank);
@@ -1549,7 +1557,7 @@ void update_memory()
 
 		        // clean out the activate record for
 			// CYCLE_VAL - T_FAW
-			flush_activate_record(channel, rank, CYCLE_VAL); 
+			flush_activate_record(channel, rank, CYCLE_VAL);
 
 			// if we are at the refresh completion
 			// deadline
@@ -1582,7 +1590,7 @@ void update_memory()
 		// update the variables corresponding to the non-queue
 		// variables
 		update_issuable_commands(channel);
-		
+
 		// update the request cmds in the queues
 		update_read_queue_commands(channel);
 
@@ -1596,30 +1604,30 @@ void update_memory()
 
 
 //------------------------------------------------------------
-// Calculate Power: It calculates and returns average power used by every Rank on Every 
-// Channel during the course of the simulation 
-// Units : Time- ns; Current mA; Voltage V; Power mW; 
+// Calculate Power: It calculates and returns average power used by every Rank on Every
+// Channel during the course of the simulation
+// Units : Time- ns; Current mA; Voltage V; Power mW;
 //------------------------------------------------------------
 
  float calculate_power(int channel, int rank, int print_stats_type, int chips_per_rank)
 {
 	/*
 	Power is calculated using the equations from Technical Note "TN-41-01: Calculating Memory System Power for DDR"
-	The current values IDD* are taken from the data sheets. 
+	The current values IDD* are taken from the data sheets.
 	These are average current values that the chip will draw when certain actions occur as frequently as possible.
 	i.e., the worst case power consumption
 	Eg: when ACTs happen every tRC
-		pds_<component> is the power calculated by directly using the current values from the data sheet. 'pds' stands for 
-	PowerDataSheet. This will the power drawn by the chip when operating under the activity that is assumed in the data 
+		pds_<component> is the power calculated by directly using the current values from the data sheet. 'pds' stands for
+	PowerDataSheet. This will the power drawn by the chip when operating under the activity that is assumed in the data
 	sheet. This mostly represents the worst case power
 		These pds_<*> components need to be derated in accordance with the activity that is observed. Eg: If ACTs occur slower
-	than every tRC, then pds_act will be derated to give "psch_act" (SCHeduled Power consumed by Activate) 
+	than every tRC, then pds_act will be derated to give "psch_act" (SCHeduled Power consumed by Activate)
 	*/
 
 /*------------------------------------------------------------
-// total_power is the sum of of 13 components listed below 
+// total_power is the sum of of 13 components listed below
 // Note: CKE is the ClocK Enable to every chip.
-// Note: Even though the reads and write are to a different rank on the same channel, the Pull-Up and the Pull-Down resistors continue 
+// Note: Even though the reads and write are to a different rank on the same channel, the Pull-Up and the Pull-Down resistors continue
 // 		to burn some power. psch_termWoth and psch_termWoth stand for the power dissipated in the rank in question when the reads and
 // 		writes are to other ranks on the channel
 
@@ -1639,7 +1647,7 @@ void update_memory()
 
 ------------------------------------------------------------*/
 
-	float pds_act ;						
+	float pds_act ;
 	float pds_act_pdn;
 	float pds_act_stby;
 	float pds_pre_pdn_fast;
@@ -1680,7 +1688,7 @@ void update_memory()
 	----------------------------------------------------*/
 
 	pds_act = (IDD0 - (IDD3N * T_RAS + IDD2N *(T_RC - T_RAS))/T_RC) * VDD;
-	
+
 	pds_pre_pdn_slow = IDD2P0 * VDD;
 
 	pds_pre_pdn_fast = IDD2P1 * VDD;
@@ -1724,7 +1732,7 @@ void update_memory()
 	} else {
 		psch_act = pds_act * T_RC/(average_gap_between_activates[channel][rank]);
 	}
-	
+
 	psch_act_pdn = pds_act_pdn * ((double)stats_time_spent_in_active_power_down[channel][rank]/CYCLE_VAL);
 	psch_pre_pdn_slow = pds_pre_pdn_slow * ((double)stats_time_spent_in_precharge_power_down_slow[channel][rank]/CYCLE_VAL);
 	psch_pre_pdn_fast = pds_pre_pdn_fast * ((double)stats_time_spent_in_precharge_power_down_fast[channel][rank]/CYCLE_VAL);
@@ -1732,10 +1740,10 @@ void update_memory()
 	psch_act_stby = pds_act_stby * ((double)stats_time_spent_in_active_standby[channel][rank]/CYCLE_VAL);
 
 	/*----------------------------------------------------
-  //pds_pre_stby assumes that the system is powered up and every 
-	//row has been precharged during every cycle 
+  //pds_pre_stby assumes that the system is powered up and every
+	//row has been precharged during every cycle
 	// In reality, the chip could have been in a power-down mode
-	//or a row could have been active. The time spent in these modes 
+	//or a row could have been active. The time spent in these modes
 	//should be deducted from total time
 	----------------------------------------------------*/
 	psch_pre_stby = pds_pre_stby * ((double)(CYCLE_VAL - stats_time_spent_in_active_standby[channel][rank]- stats_time_spent_in_precharge_power_down_slow[channel][rank] - stats_time_spent_in_precharge_power_down_fast[channel][rank] - stats_time_spent_in_active_power_down[channel][rank]))/CYCLE_VAL;
@@ -1743,7 +1751,7 @@ void update_memory()
 	/*----------------------------------------------------
   //Calculate Total Reads ans Writes performed in the system
 	----------------------------------------------------*/
-	
+
 	for(int i=0;i<NUM_BANKS;i++)
 	{
 		writes+= stats_num_write[channel][rank][i];
@@ -1762,7 +1770,7 @@ void update_memory()
   //pds_ref assumes that there is always a refresh happening.
 	//in reality, refresh consumes only T_RFC out of every t_REFI
 	----------------------------------------------------*/
-	psch_ref = pds_ref * T_RFC/T_REFI; 
+	psch_ref = pds_ref * T_RFC/T_REFI;
 
 	psch_dq = pds_dq * (reads*T_DATA_TRANS)/CYCLE_VAL;
 
@@ -1809,21 +1817,21 @@ void update_memory()
 				(((double)(CYCLE_VAL - stats_time_spent_in_active_standby[channel][rank]- stats_time_spent_in_precharge_power_down_slow[channel][rank] - stats_time_spent_in_precharge_power_down_fast[channel][rank] - stats_time_spent_in_active_power_down[channel][rank]))/CYCLE_VAL)
 				);
 	*/
-		printf ("Channel %d Rank %d Read Cycles(%%)           %9.2f # %% cycles the Rank performed a Read\n",channel, rank, (double)reads*T_DATA_TRANS/CYCLE_VAL ); 
-		printf ("Channel %d Rank %d Write Cycles(%%)          %9.2f # %% cycles the Rank performed a Write\n",channel, rank, (double)writes*T_DATA_TRANS/CYCLE_VAL ); 
+		printf ("Channel %d Rank %d Read Cycles(%%)           %9.2f # %% cycles the Rank performed a Read\n",channel, rank, (double)reads*T_DATA_TRANS/CYCLE_VAL );
+		printf ("Channel %d Rank %d Write Cycles(%%)          %9.2f # %% cycles the Rank performed a Write\n",channel, rank, (double)writes*T_DATA_TRANS/CYCLE_VAL );
 		printf ("Channel %d Rank %d Read Other(%%)            %9.2f # %% cycles other Ranks on the channel performed a Read\n",channel, rank, \
-					   ((double)stats_time_spent_terminating_reads_from_other_ranks[channel][rank]/CYCLE_VAL) ); 
+					   ((double)stats_time_spent_terminating_reads_from_other_ranks[channel][rank]/CYCLE_VAL) );
 		printf ("Channel %d Rank %d Write Other(%%)           %9.2f # %% cycles other Ranks on the channel performed a Write\n",channel, rank,\
-					  ((double)stats_time_spent_terminating_writes_to_other_ranks[channel][rank]/CYCLE_VAL) ); 
+					  ((double)stats_time_spent_terminating_writes_to_other_ranks[channel][rank]/CYCLE_VAL) );
 		printf ("Channel %d Rank %d PRE_PDN_FAST(%%)          %9.2f # %% cycles the Rank was in Fast Power Down and all Banks were Precharged\n",channel, rank, \
-						((double)stats_time_spent_in_precharge_power_down_fast[channel][rank]/CYCLE_VAL) ); 
+						((double)stats_time_spent_in_precharge_power_down_fast[channel][rank]/CYCLE_VAL) );
 		printf ("Channel %d Rank %d PRE_PDN_SLOW(%%)          %9.2f # %% cycles the Rank was in Slow Power Down and all Banks were Precharged\n",channel, rank, \
-						((double)stats_time_spent_in_precharge_power_down_slow[channel][rank]/CYCLE_VAL) ); 
+						((double)stats_time_spent_in_precharge_power_down_slow[channel][rank]/CYCLE_VAL) );
 		printf ("Channel %d Rank %d ACT_PDN(%%)               %9.2f # %% cycles the Rank was in Active Power Down and atleast one Bank was Active\n",channel, rank, \
-						((double)stats_time_spent_in_active_power_down[channel][rank]/CYCLE_VAL) ); 
+						((double)stats_time_spent_in_active_power_down[channel][rank]/CYCLE_VAL) );
 		printf ("Channel %d Rank %d ACT_STBY(%%)              %9.2f # %% cycles the Rank was in Standby and atleast one bank was Active\n",channel, rank,\
-						 ((double)stats_time_spent_in_active_standby[channel][rank]/CYCLE_VAL) ); 
-		printf ("Channel %d Rank %d PRE_STBY(%%)              %9.2f # %% cycles the Rank was in Standby and all Banks were Precharged\n",channel, rank, time_in_pre_stby ); 
+						 ((double)stats_time_spent_in_active_standby[channel][rank]/CYCLE_VAL) );
+		printf ("Channel %d Rank %d PRE_STBY(%%)              %9.2f # %% cycles the Rank was in Standby and all Banks were Precharged\n",channel, rank, time_in_pre_stby );
 		printf ("---------------------------------------------------------------\n\n");
 
 
@@ -1833,15 +1841,15 @@ void update_memory()
 		----------------------------------------------------*/
 
 
-		printf ("Channel %d Rank %d Background(mw)          %9.2f # depends only on Power Down time and time all banks were precharged\n",channel, rank, psch_act_pdn+psch_act_stby+psch_pre_pdn_slow+psch_pre_pdn_fast+psch_pre_stby); 
-		printf ("Channel %d Rank %d Act(mW)                 %9.2f # power spend bringing data to the row buffer\n",channel, rank, psch_act); 
-		printf ("Channel %d Rank %d Read(mW)                %9.2f # power spent doing a Read  after the Row Buffer is open\n",channel, rank, psch_rd); 
-		printf ("Channel %d Rank %d Write(mW)               %9.2f # power spent doing a Write after the Row Buffer is open\n",channel, rank, psch_wr); 
-		printf ("Channel %d Rank %d Read Terminate(mW)      %9.2f # power dissipated in ODT resistors during Read\n",channel, rank, psch_dq); 
-		printf ("Channel %d Rank %d Write Terminate(mW)     %9.2f # power dissipated in ODT resistors during Write\n",channel, rank, psch_termW); 
-		printf ("Channel %d Rank %d termRoth(mW)            %9.2f # power dissipated in ODT resistors during Reads  in other ranks\n",channel, rank, psch_termRoth); 
-		printf ("Channel %d Rank %d termWoth(mW)            %9.2f # power dissipated in ODT resistors during Writes in other ranks\n",channel, rank, psch_termWoth); 
-		printf ("Channel %d Rank %d Refresh(mW)             %9.2f # depends on frequency of Refresh (tREFI)\n",channel, rank, psch_ref); 
+		printf ("Channel %d Rank %d Background(mw)          %9.2f # depends only on Power Down time and time all banks were precharged\n",channel, rank, psch_act_pdn+psch_act_stby+psch_pre_pdn_slow+psch_pre_pdn_fast+psch_pre_stby);
+		printf ("Channel %d Rank %d Act(mW)                 %9.2f # power spend bringing data to the row buffer\n",channel, rank, psch_act);
+		printf ("Channel %d Rank %d Read(mW)                %9.2f # power spent doing a Read  after the Row Buffer is open\n",channel, rank, psch_rd);
+		printf ("Channel %d Rank %d Write(mW)               %9.2f # power spent doing a Write after the Row Buffer is open\n",channel, rank, psch_wr);
+		printf ("Channel %d Rank %d Read Terminate(mW)      %9.2f # power dissipated in ODT resistors during Read\n",channel, rank, psch_dq);
+		printf ("Channel %d Rank %d Write Terminate(mW)     %9.2f # power dissipated in ODT resistors during Write\n",channel, rank, psch_termW);
+		printf ("Channel %d Rank %d termRoth(mW)            %9.2f # power dissipated in ODT resistors during Reads  in other ranks\n",channel, rank, psch_termRoth);
+		printf ("Channel %d Rank %d termWoth(mW)            %9.2f # power dissipated in ODT resistors during Writes in other ranks\n",channel, rank, psch_termWoth);
+		printf ("Channel %d Rank %d Refresh(mW)             %9.2f # depends on frequency of Refresh (tREFI)\n",channel, rank, psch_ref);
 		printf ("---------------------------------------------------------------\n");
 		printf ("Channel %d Rank %d Total Rank Power(mW)    %9.2f # (Sum of above components)*(num chips in each Rank)\n",channel, rank, total_rank_power);
 		printf ("---------------------------------------------------------------\n\n");
@@ -1862,7 +1870,7 @@ void update_memory()
 				psch_termW, \
 				psch_termRoth, \
 				psch_termWoth, \
-				psch_ref                                                                                  
+				psch_ref
 
 				);
 */

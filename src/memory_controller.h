@@ -5,7 +5,7 @@
 #define MAX_NUM_RANKS 16
 #define MAX_NUM_BANKS 32
 
-// Moved here from main.c 
+// Moved here from main.c
 long long int *committed; // total committed instructions in each core
 long long int *fetched;   // total fetched instructions in each core
 
@@ -25,8 +25,8 @@ typedef struct draddr
   int column;	// column id
 } dram_address_t;
 
-// DRAM Commands 
-typedef enum {ACT_CMD, COL_READ_CMD, PRE_CMD, COL_WRITE_CMD, PWR_DN_SLOW_CMD, PWR_DN_FAST_CMD, PWR_UP_CMD, REF_CMD, NOP} command_t; 
+// DRAM Commands
+typedef enum {ACT_CMD, COL_READ_CMD, PRE_CMD, COL_WRITE_CMD, PWR_DN_SLOW_CMD, PWR_DN_FAST_CMD, PWR_UP_CMD, REF_CMD, NOP} command_t;
 
 // Request Types
 typedef enum {READ, WRITE} optype_t;
@@ -36,7 +36,7 @@ typedef struct req
 {
   unsigned long long int physical_address;
   dram_address_t dram_addr;
-  long long int arrival_time;     
+  long long int arrival_time;
   long long int dispatch_time; // when COL_RD or COL_WR is issued for this request
   long long int completion_time; //final completion time
   long long int latency; // dispatch_time-arrival_time
@@ -52,7 +52,7 @@ typedef struct req
 } request_t;
 
 // Bankstates
-typedef enum 
+typedef enum
 {
   IDLE, PRECHARGING, REFRESHING, ROW_ACTIVE, PRECHARGE_POWER_DOWN_FAST, PRECHARGE_POWER_DOWN_SLOW, ACTIVE_POWER_DOWN
 } bankstate_t;
@@ -71,7 +71,7 @@ typedef struct bnk
   long long int next_refresh;
 }bank_t;
 
-// contains the states of all banks in the system 
+// contains the states of all banks in the system
 bank_t dram_state[MAX_NUM_CHANNELS][MAX_NUM_RANKS][MAX_NUM_BANKS];
 
 // command issued this cycle to this channel

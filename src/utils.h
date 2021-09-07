@@ -4,8 +4,8 @@
 // Utility functions
 
 // Turn on the following flag to see debug messages
-#define CMD_DEBUG
-#define SCHEDULER_DEBUG
+//#define CMD_DEBUG
+//#define SCHEDULER_DEBUG
 
 #ifdef CMD_DEBUG
 #define UT_MEM_DEBUG(...) printf(__VA_ARGS__)
