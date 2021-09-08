@@ -133,12 +133,12 @@ void schedule(int channel){
 
 			int row_buffer_hit = (row == dram_state[channel][rank][bank].active_row) ? 1:0;
 			curr_policy[channel][rank][bank] = get_policy(channel, rank, bank, row_buffer_hit, curr_policy[channel][rank][bank]);
+			if ((PLOT_HIST) && (channel == trackdC) && (rank == trackdR) && (bank == trackdB)){
+				fprintf(fptr, "%lld, %d \n", CYCLE_VAL, curr_policy[channel][rank][bank]);
+			}
 			if(wr_ptr->command_issuable){
 				if(curr_policy[channel][rank][bank] == OPEN_PAGE){
 					issue_request_command(wr_ptr);
-					if ((PLOT_HIST) && (channel == trackdC) && (rank == trackdR) && (bank == trackdB)){
-						fprintf(fptr, "%lld, %d \n", CYCLE_VAL, OPEN_PAGE);
-					}
 					break;
 				}
 				else{
@@ -152,9 +152,6 @@ void schedule(int channel){
 						recent_colacc[channel][rank][bank] = 0;
 
 					issue_request_command(wr_ptr);
-					if ((PLOT_HIST) && (channel == trackdC) && (rank == trackdR) && (bank == trackdB)){
-						fprintf(fptr, "%lld, %d \n", CYCLE_VAL, CLOSE_PAGE);
-					}
 					if(recent_colacc[channel][rank][bank])
 						if(issue_autoprecharge(channel, rank, bank))
 							recent_colacc[channel][rank][bank] = 0;
@@ -178,12 +175,12 @@ void schedule(int channel){
 
 			int row_buffer_hit = (row == dram_state[channel][rank][bank].active_row) ? 1:0;
 			curr_policy[channel][rank][bank] = get_policy(channel, rank, bank, row_buffer_hit, curr_policy[channel][rank][bank]);
+			if ((PLOT_HIST) && (channel == trackdC) && (rank == trackdR) && (bank == trackdB)){
+				fprintf(fptr, "%lld, %d \n", CYCLE_VAL, curr_policy[channel][rank][bank]);
+			}
 			if(rd_ptr->command_issuable){
 				if(curr_policy[channel][rank][bank] == OPEN_PAGE){
 					issue_request_command(rd_ptr);
-					if ((PLOT_HIST) && (channel == trackdC) && (rank == trackdR) && (bank == trackdB)){
-						fprintf(fptr, "%lld, %d \n", CYCLE_VAL, OPEN_PAGE);
-					}
 					break;
 				}
 				else{
@@ -197,9 +194,6 @@ void schedule(int channel){
 						recent_colacc[channel][rank][bank] = 0;
 
 					issue_request_command(rd_ptr);
-					if ((PLOT_HIST) && (channel == trackdC) && (rank == trackdR) && (bank == trackdB)){
-						fprintf(fptr, "%lld, %d \n", CYCLE_VAL, CLOSE_PAGE);
-					}
 					if(recent_colacc[channel][rank][bank])
 						if(is_precharge_allowed(channel, rank, bank))
 							if(issue_precharge_command(channel, rank, bank))
