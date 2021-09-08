@@ -6,7 +6,7 @@
 #include "processor.h"
 #include "configfile.h"
 #include "memory_controller.h"
-#include "scheduler-close.h"
+#include "scheduler_adaptive.h"
 #include "params.h"
 
 #define MAXTRACELINESIZE 64
