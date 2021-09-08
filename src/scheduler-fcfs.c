@@ -3,6 +3,7 @@
 #include "utils.h"
 
 #include "memory_controller.h"
+#include "scheduler-fcfs.h"
 
 extern long long int CYCLE_VAL;
 

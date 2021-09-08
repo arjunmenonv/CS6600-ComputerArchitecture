@@ -8,7 +8,7 @@
 
 #include "params.h"
 #include "memory_controller.h"
-#include "scheduler.h"
+#include "scheduler-fcfs.h"
 #include "processor.h"
 
 // ROB Structure, used to release stall on instructions
