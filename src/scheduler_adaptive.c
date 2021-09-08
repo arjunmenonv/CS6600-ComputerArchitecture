@@ -9,16 +9,19 @@
 // use rd_ptr->dram_addr.row and dram_state.active_row to check for row hit or miss
 
 extern long long int CYCLE_VAL;
-
-
 #define HIGH_THRESH 10
 #define LOW_THRESH 5
+#define PLOT_HIST 1
 typedef enum {OPEN_PAGE, CLOSE_PAGE} policy_t;
 
 // State Variables used in AdapPage:
 int counter[MAX_NUM_CHANNELS][MAX_NUM_RANKS][MAX_NUM_BANKS];
 policy_t curr_policy[MAX_NUM_CHANNELS][MAX_NUM_RANKS][MAX_NUM_BANKS];
 int recent_colacc[MAX_NUM_CHANNELS][MAX_NUM_RANKS][MAX_NUM_BANKS];
+// write policy history for (c,r,b) = (0, 0, 0) to a csv file
+//
+FILE *fptr;
+int trackdC = 0; int trackdR = 0; int trackdB = 0;
 
 void init_scheduler_vars(){
 	// initialize all scheduler variables here:
@@ -32,7 +35,7 @@ void init_scheduler_vars(){
 			}
 		}
 	}
-	/* printf("init sched vars ended\n"); */
+	//printf("init sched vars ended\n");
 	return;
 }
 
@@ -66,7 +69,7 @@ int drain_writes[MAX_NUM_CHANNELS];
    Before issuing a command it is important to check if it is issuable. For the RD/WR queue resident commands, checking the "command_issuable" flag is necessary. To check if the other commands (mentioned above) can be issued, it is important to check one of the following functions: is_precharge_allowed, is_all_bank_precharge_allowed, is_powerdown_fast_allowed, is_powerdown_slow_allowed, is_powerup_allowed, is_refresh_allowed, is_autoprecharge_allowed, is_activate_allowed.
    */
 
-/* 
+/*
  * Input: Variable to indicate Cache Hit or Miss; PrevPolicy; HighThresh, LowThresh
  * Output: Policy var (open/closed)
 */
@@ -80,7 +83,7 @@ policy_t get_policy(int channel, int rank, int bank, int hit, policy_t curr_poli
 			next_policy = CLOSE_PAGE;
 		else
 			next_policy = OPEN_PAGE;
-	} 
+	}
 	else{
 		if(hit && (counter[channel][rank][bank] > 0))
 			counter[channel][rank][bank]--;
@@ -101,6 +104,8 @@ void schedule(int channel){
 	request_t * rd_ptr = NULL;
 	request_t * wr_ptr = NULL;
 
+	if (PLOT_HIST) fptr = fopen("output/polHist.csv", "a");
+
 	// if in write drain mode, keep draining writes until the
 	// write queue occupancy drops to LO_WM
 	if (drain_writes[channel] && (write_queue_length[channel] > LO_WM))
@@ -120,7 +125,7 @@ void schedule(int channel){
 	// elements (already arranged in the order of arrival), and
 	// issue the command for the first request that is ready
 	if(drain_writes[channel]){
-		/* printf("In write drain\n"); */
+		//printf("In write drain\n");
 		LL_FOREACH(write_queue_head[channel], wr_ptr){
 			int bank = wr_ptr->dram_addr.bank;
 			int rank = wr_ptr->dram_addr.rank;
@@ -131,6 +136,9 @@ void schedule(int channel){
 			if(wr_ptr->command_issuable){
 				if(curr_policy[channel][rank][bank] == OPEN_PAGE){
 					issue_request_command(wr_ptr);
+					if ((PLOT_HIST) && (channel == trackdC) && (rank == trackdR) && (bank == trackdB)){
+						fprintf(fptr, "%lld, %d \n", CYCLE_VAL, OPEN_PAGE);
+					}
 					break;
 				}
 				else{
@@ -144,6 +152,9 @@ void schedule(int channel){
 						recent_colacc[channel][rank][bank] = 0;
 
 					issue_request_command(wr_ptr);
+					if ((PLOT_HIST) && (channel == trackdC) && (rank == trackdR) && (bank == trackdB)){
+						fprintf(fptr, "%lld, %d \n", CYCLE_VAL, CLOSE_PAGE);
+					}
 					if(recent_colacc[channel][rank][bank])
 						if(issue_autoprecharge(channel, rank, bank))
 							recent_colacc[channel][rank][bank] = 0;
@@ -170,6 +181,9 @@ void schedule(int channel){
 			if(rd_ptr->command_issuable){
 				if(curr_policy[channel][rank][bank] == OPEN_PAGE){
 					issue_request_command(rd_ptr);
+					if ((PLOT_HIST) && (channel == trackdC) && (rank == trackdR) && (bank == trackdB)){
+						fprintf(fptr, "%lld, %d \n", CYCLE_VAL, OPEN_PAGE);
+					}
 					break;
 				}
 				else{
@@ -183,6 +197,9 @@ void schedule(int channel){
 						recent_colacc[channel][rank][bank] = 0;
 
 					issue_request_command(rd_ptr);
+					if ((PLOT_HIST) && (channel == trackdC) && (rank == trackdR) && (bank == trackdB)){
+						fprintf(fptr, "%lld, %d \n", CYCLE_VAL, CLOSE_PAGE);
+					}
 					if(recent_colacc[channel][rank][bank])
 						if(issue_autoprecharge(channel, rank, bank))
 							recent_colacc[channel][rank][bank] = 0;
@@ -191,6 +208,8 @@ void schedule(int channel){
 			}
 		}
 	}
+	if (PLOT_HIST) fclose(fptr);
+
 }
 
 void scheduler_stats(){
