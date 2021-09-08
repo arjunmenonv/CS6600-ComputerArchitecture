@@ -3,6 +3,7 @@
 #include "utils.h"
 
 #include "memory_controller.h"
+#include "scheduler-close.h"
 #include "params.h"
 
 /* A basic FCFS policy augmented with a not-so-clever close-page policy.

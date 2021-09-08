@@ -92,11 +92,11 @@ policy_t get_policy(int channel, int rank, int bank, int hit, policy_t curr_poli
 		else
 			next_policy = CLOSE_PAGE;
 	}
-	//printf("get_policy ended. Policy is:");
-	/*if(next_policy == OPEN_PAGE)
-		printf("Open page\n");
-	else
-		printf("Close page\n");*/
+	/* printf("get_policy ended. Policy is:"); */
+	/* if(next_policy == OPEN_PAGE) */
+	/* 	printf("Open page\n"); */
+	/* else */
+	/* 	printf("Close page\n"); */
 	return next_policy;
 }
 
@@ -170,7 +170,7 @@ void schedule(int channel){
 	// command can be issued in this cycle and issue it
 	// Simple FCFS
 	if(!drain_writes[channel]){
-		//printf("In read drain\n");
+		/* printf("In read drain\n"); */
 		LL_FOREACH(read_queue_head[channel],rd_ptr){
 			int bank = rd_ptr->dram_addr.bank;
 			int rank = rd_ptr->dram_addr.rank;
@@ -214,5 +214,5 @@ void schedule(int channel){
 }
 
 void scheduler_stats(){
-  // Nothing to print for now.
+  /* Nothing to print for now. */
 }

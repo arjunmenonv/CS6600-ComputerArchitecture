@@ -1,16 +1,13 @@
-bin/usimm input/4channel.cfg ../traces/black ../traces/black ../traces/black ../traces/black > output/close/bl-bl-bl-bl-4
-#bin/usimm input/4channel.cfg ../traces/comm1 ../traces/comm1 ../traces/comm1 ../traces/comm1 > output/close/c1-c1-c1-c1-4
-#bin/usimm input/4channel.cfg ../traces/comm2 ../traces/comm2 ../traces/comm2 ../traces/comm2 > output/close/c2-c2-c2-c2-4
-#bin/usimm input/4channel.cfg ../traces/face ../traces/face ../traces/face ../traces/face > output/close/fa-fa-fa-fa-4
-
-#bin/usimm input/4channel.cfg ../traces/ferret ../traces/ferret ../traces/ferret ../traces/ferret > output/close/fe-fe-fe-fe-4 &
-#bin/usimm input/4channel.cfg ../traces/fluid ../traces/fluid ../traces/fluid ../traces/fluid > output/close/fl-fl-fl-fl-4 &
-#bin/usimm input/4channel.cfg ../traces/freq ../traces/freq ../traces/freq ../traces/freq > output/close/fr-fr-fr-fr-4 &
-#bin/usimm input/4channel.cfg ../traces/MT0-canneal ../traces/MT0-canneal ../traces/MT0-canneal ../traces/MT0-canneal > output/close/m0-m0-m0-m0-4 &
-
-#bin/usimm input/4channel.cfg ../traces/MT1-canneal ../traces/MT1-canneal ../traces/MT1-canneal ../traces/MT1-canneal > output/close/m1-m1-m1-m1-4 &
-#bin/usimm input/4channel.cfg ../traces/MT2-canneal ../traces/MT2-canneal ../traces/MT2-canneal ../traces/MT2-canneal > output/close/m2-m2-m2-m2-4 &
-#bin/usimm input/4channel.cfg ../traces/MT3-canneal ../traces/MT3-canneal ../traces/MT3-canneal ../traces/MT3-canneal > output/close/m3-m3-m3-m3-4 &
-#bin/usimm input/4channel.cfg ../traces/stream ../traces/stream ../traces/stream ../traces/stream > output/close/st-st-st-st-4
-
-#bin/usimm input/4channel.cfg ../traces/swapt ../traces/swapt ../traces/swapt ../traces/swapt > output/close/sw-sw-sw-sw-4
+bin/usimm input/4channel.cfg input/traces/comm2 input/traces/comm2 input/traces/comm2 input/traces/comm2 > output/c2_close_1 &
+bin/usimm input/4channel.cfg input/traces/comm1 input/traces/comm1 input/traces/comm1 input/traces/comm1 > output/c1_close_1 &
+bin/usimm input/4channel.cfg input/traces/black input/traces/black input/traces/black input/traces/black > output/bl_close_1 &
+bin/usimm input/4channel.cfg input/traces/face input/traces/face input/traces/face input/traces/face > output/fa_close_1 &
+# bin/usimm input/4channel.cfg input/traces/ferret input/traces/ferret input/traces/ferret input/traces/ferret > output/fe_close_1 &
+# bin/usimm input/4channel.cfg input/traces/fluid input/traces/fluid input/traces/fluid input/traces/fluid > output/fl_close_1 &
+# bin/usimm input/4channel.cfg input/traces/freq input/traces/freq input/traces/freq input/traces/freq > output/fr_close_1 &
+# bin/usimm input/4channel.cfg input/traces/MT0-canneal input/traces/MT0-canneal input/traces/MT0-canneal input/traces/MT0-canneal > output/m0 &
+# bin/usimm input/4channel.cfg input/traces/MT1-canneal input/traces/MT1-canneal input/traces/MT1-canneal input/traces/MT1-canneal > output/m1 &
+# bin/usimm input/4channel.cfg input/traces/MT2-canneal input/traces/MT2-canneal input/traces/MT2-canneal input/traces/MT2-canneal > output/m2 &
+# bin/usimm input/4channel.cfg input/traces/MT3-canneal input/traces/MT3-canneal input/traces/MT3-canneal input/traces/MT3-canneal > output/m3 &
+# bin/usimm input/4channel.cfg input/traces/stream input/traces/stream input/traces/stream input/traces/stream > output/st_close_1 &
+# bin/usimm input/4channel.cfg input/traces/swapt input/traces/swapt input/traces/swapt input/traces/swapt > output/sw_close_1 &
