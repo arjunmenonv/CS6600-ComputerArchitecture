@@ -9,16 +9,19 @@
 // use rd_ptr->dram_addr.row and dram_state.active_row to check for row hit or miss
 
 extern long long int CYCLE_VAL;
-
-
 #define HIGH_THRESH 10
 #define LOW_THRESH 5
+#define PLOT_HIST 1
 typedef enum {OPEN_PAGE, CLOSE_PAGE} policy_t;
 
 // State Variables used in AdapPage:
 int counter[MAX_NUM_CHANNELS][MAX_NUM_RANKS][MAX_NUM_BANKS];
 policy_t curr_policy[MAX_NUM_CHANNELS][MAX_NUM_RANKS][MAX_NUM_BANKS];
 int recent_colacc[MAX_NUM_CHANNELS][MAX_NUM_RANKS][MAX_NUM_BANKS];
+// write policy history for (c,r,b) = (0, 0, 0) to a csv file
+//
+FILE *fptr;
+int trackdC = 0; int trackdR = 0; int trackdB = 0;
 
 void init_scheduler_vars(){
 	// initialize all scheduler variables here:
@@ -101,6 +104,8 @@ void schedule(int channel){
 	request_t * rd_ptr = NULL;
 	request_t * wr_ptr = NULL;
 
+	if (PLOT_HIST) fptr = fopen("output/polHist.csv", "a");
+
 	// if in write drain mode, keep draining writes until the
 	// write queue occupancy drops to LO_WM
 	if (drain_writes[channel] && (write_queue_length[channel] > LO_WM))
@@ -131,6 +136,9 @@ void schedule(int channel){
 			if(wr_ptr->command_issuable){
 				if(curr_policy[channel][rank][bank] == OPEN_PAGE){
 					issue_request_command(wr_ptr);
+					if ((PLOT_HIST) && (channel == trackdC) && (rank == trackdR) && (bank == trackdB)){
+						fprintf(fptr, "%lld, %d \n", CYCLE_VAL, OPEN_PAGE);
+					}
 					break;
 				}
 				else{
@@ -144,6 +152,9 @@ void schedule(int channel){
 						recent_colacc[channel][rank][bank] = 0;
 
 					issue_request_command(wr_ptr);
+					if ((PLOT_HIST) && (channel == trackdC) && (rank == trackdR) && (bank == trackdB)){
+						fprintf(fptr, "%lld, %d \n", CYCLE_VAL, CLOSE_PAGE);
+					}
 					if(recent_colacc[channel][rank][bank])
 						if(issue_autoprecharge(channel, rank, bank))
 							recent_colacc[channel][rank][bank] = 0;
@@ -170,6 +181,9 @@ void schedule(int channel){
 			if(rd_ptr->command_issuable){
 				if(curr_policy[channel][rank][bank] == OPEN_PAGE){
 					issue_request_command(rd_ptr);
+					if ((PLOT_HIST) && (channel == trackdC) && (rank == trackdR) && (bank == trackdB)){
+						fprintf(fptr, "%lld, %d \n", CYCLE_VAL, OPEN_PAGE);
+					}
 					break;
 				}
 				else{
@@ -183,6 +197,9 @@ void schedule(int channel){
 						recent_colacc[channel][rank][bank] = 0;
 
 					issue_request_command(rd_ptr);
+					if ((PLOT_HIST) && (channel == trackdC) && (rank == trackdR) && (bank == trackdB)){
+						fprintf(fptr, "%lld, %d \n", CYCLE_VAL, CLOSE_PAGE);
+					}
 					if(recent_colacc[channel][rank][bank])
 						if(is_precharge_allowed(channel, rank, bank))
 							if(issue_precharge_command(channel, rank, bank))
@@ -192,8 +209,10 @@ void schedule(int channel){
 			}
 		}
 	}
+	if (PLOT_HIST) fclose(fptr);
+
 }
 
 void scheduler_stats(){
-  /* Nothing to print for now. */
+  // Nothing to print for now.
 }
