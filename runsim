@@ -8,11 +8,11 @@
 ########## Hybrid Policy ############
 # bin/usimm input/4channel.cfg input/traces/comm2 input/traces/comm2 input/traces/comm2 input/traces/comm2 > output/c2_hybrid_updated &
 # bin/usimm input/4channel.cfg input/traces/comm1 input/traces/comm1 input/traces/comm1 input/traces/comm1 > output/c1_hybrid_updated &
-# bin/usimm input/4channel.cfg input/traces/black input/traces/black input/traces/black input/traces/black > output/bl_hybrid_updated &
+bin/usimm input/4channel.cfg input/traces/black input/traces/black input/traces/black input/traces/black > output/bl_hybrid_updated &
 # bin/usimm input/4channel.cfg input/traces/face input/traces/face input/traces/face input/traces/face > output/fa_hybrid_updated &
 # bin/usimm input/4channel.cfg input/traces/ferret input/traces/ferret input/traces/ferret input/traces/ferret > output/fe_hybrid &
 # bin/usimm input/4channel.cfg input/traces/fluid input/traces/fluid input/traces/fluid input/traces/fluid > output/fl_hybrid &
-bin/usimm input/4channel.cfg input/traces/freq input/traces/freq input/traces/freq input/traces/freq > output/fr_hybrid_updated &
+# bin/usimm input/4channel.cfg input/traces/freq input/traces/freq input/traces/freq input/traces/freq > output/fr_hybrid_updated &
 # bin/usimm input/4channel.cfg input/traces/MT0-canneal input/traces/MT0-canneal input/traces/MT0-canneal input/traces/MT0-canneal > output/m0_hybrid &
 # bin/usimm input/4channel.cfg input/traces/MT1-canneal input/traces/MT1-canneal input/traces/MT1-canneal input/traces/MT1-canneal > output/m1_hybrid &
 # bin/usimm input/4channel.cfg input/traces/MT2-canneal input/traces/MT2-canneal input/traces/MT2-canneal input/traces/MT2-canneal > output/m2_hybrid &

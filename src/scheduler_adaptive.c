@@ -33,7 +33,7 @@ void init_scheduler_vars(){
 				counter[i][j][k] = (int)(HIGH_THRESH + LOW_THRESH)/2;
 				curr_policy[i][j][k] = OPEN_PAGE;
 				recent_colacc[i][j][k] = 0;
-                prev_closed_row[i][j][k] = 0;
+                prev_closed_row[i][j][k] = -1;
 			}
 		}
 	}
@@ -134,51 +134,44 @@ void schedule(int channel){
 			int row = wr_ptr->dram_addr.row;
 
 			int row_buffer_hit;
-            if(curr_policy[channel][rank][bank] == OPEN_PAGE){
-                if(row == dram_state[channel][rank][bank].active_row)
-                    row_buffer_hit = 1;
-                else
-                    row_buffer_hit = 0;
-            }
-            else{
-                if(row == prev_closed_row[channel][rank][bank])
-                    row_buffer_hit = 1;
-                else
-                    row_buffer_hit = 0;
-            }
+            int should_pre;
 			if(wr_ptr->command_issuable){
-				if(curr_policy[channel][rank][bank] == OPEN_PAGE){
-					issue_request_command(wr_ptr);
+                if(curr_policy[channel][rank][bank] == OPEN_PAGE){
+                    if(row == dram_state[channel][rank][bank].active_row)
+                        row_buffer_hit = 1;
+                    else
+                        row_buffer_hit = 0;
                     curr_policy[channel][rank][bank] = get_policy(channel, rank, bank, row_buffer_hit, curr_policy[channel][rank][bank]);
-					if ((PLOT_HIST) && (channel == trackdC) && (rank == trackdR) && (bank == trackdB)){
+					issue_request_command(wr_ptr);
+					if ((PLOT_HIST) && (channel == trackdC) && (rank == trackdR) && (bank == trackdB))
 						fprintf(fptr, "%lld, %d \n", CYCLE_VAL, OPEN_PAGE);
-					}
 					break;
-				}
-				else{
+                }
+                else{
+                    if(row == prev_closed_row[channel][rank][bank])
+                        row_buffer_hit = 1;
+                    else
+                        row_buffer_hit = 0;
 					/* Before issuing the command, see if this bank is now a candidate for closure (if it just did a column-rd/wr).
 					If the bank just did an activate or precharge, it is not a candidate for closure. */
 					if (wr_ptr->next_command == COL_WRITE_CMD){
-						recent_colacc[channel][rank][bank] = 1;
+                        should_pre = 1;
                         prev_closed_row[channel][rank][bank] = row;
                     }
 					if (wr_ptr->next_command == ACT_CMD)
-						recent_colacc[channel][rank][bank] = 0;
+                        should_pre = 0;
 					if (wr_ptr->next_command == PRE_CMD)
-						recent_colacc[channel][rank][bank] = 0;
+                        should_pre = 0;
 
-					issue_request_command(wr_ptr);
                     curr_policy[channel][rank][bank] = get_policy(channel, rank, bank, row_buffer_hit, curr_policy[channel][rank][bank]);
-					if ((PLOT_HIST) && (channel == trackdC) && (rank == trackdR) && (bank == trackdB)){
+					issue_request_command(wr_ptr);
+					if ((PLOT_HIST) && (channel == trackdC) && (rank == trackdR) && (bank == trackdB))
 						fprintf(fptr, "%lld, %d \n", CYCLE_VAL, CLOSE_PAGE);
-					}
-					if(recent_colacc[channel][rank][bank])
-                        if(is_precharge_allowed(channel, rank, bank))
-                            if(issue_precharge_command(channel, rank, bank))
-                                recent_colacc[channel][rank][bank] = 0;
 
+					if(should_pre)
+                        issue_autoprecharge(channel, rank, bank);
 					break;
-				}
+                }
 			}
 		}
 	}
@@ -195,48 +188,43 @@ void schedule(int channel){
 			int row = rd_ptr->dram_addr.row;
 
 			int row_buffer_hit;
-            if(curr_policy[channel][rank][bank] == OPEN_PAGE){
-                if(row == dram_state[channel][rank][bank].active_row)
-                    row_buffer_hit = 1;
-                else
-                    row_buffer_hit = 0;
-            }
-            else{
-                if(row == prev_closed_row[channel][rank][bank])
-                    row_buffer_hit = 1;
-                else
-                    row_buffer_hit = 0;
-            }
+            int should_pre;
 			if(rd_ptr->command_issuable){
 				if(curr_policy[channel][rank][bank] == OPEN_PAGE){
-					issue_request_command(rd_ptr);
+                    if(row == dram_state[channel][rank][bank].active_row)
+                        row_buffer_hit = 1;
+                    else
+                        row_buffer_hit = 0;
+
                     curr_policy[channel][rank][bank] = get_policy(channel, rank, bank, row_buffer_hit, curr_policy[channel][rank][bank]);
-					if ((PLOT_HIST) && (channel == trackdC) && (rank == trackdR) && (bank == trackdB)){
+					issue_request_command(rd_ptr);
+					if ((PLOT_HIST) && (channel == trackdC) && (rank == trackdR) && (bank == trackdB))
 						fprintf(fptr, "%lld, %d \n", CYCLE_VAL, OPEN_PAGE);
-					}
 					break;
 				}
 				else{
+                    if(row == prev_closed_row[channel][rank][bank])
+                        row_buffer_hit = 1;
+                    else
+                        row_buffer_hit = 0;
 					/* Before issuing the command, see if this bank is now a candidate for closure (if it just did a column-rd/wr).
 					If the bank just did an activate or precharge, it is not a candidate for closure. */
 					if (rd_ptr->next_command == COL_READ_CMD){
-						recent_colacc[channel][rank][bank] = 1;
+                        should_pre = 1;
                         prev_closed_row[channel][rank][bank] = row;
                     }
 					if (rd_ptr->next_command == ACT_CMD)
-						recent_colacc[channel][rank][bank] = 0;
+                        should_pre = 0;
 					if (rd_ptr->next_command == PRE_CMD)
-						recent_colacc[channel][rank][bank] = 0;
+                        should_pre = 0;
 
-					issue_request_command(rd_ptr);
                     curr_policy[channel][rank][bank] = get_policy(channel, rank, bank, row_buffer_hit, curr_policy[channel][rank][bank]);
-					if ((PLOT_HIST) && (channel == trackdC) && (rank == trackdR) && (bank == trackdB)){
+					issue_request_command(rd_ptr);
+					if ((PLOT_HIST) && (channel == trackdC) && (rank == trackdR) && (bank == trackdB))
 						fprintf(fptr, "%lld, %d \n", CYCLE_VAL, CLOSE_PAGE);
-					}
-					if(recent_colacc[channel][rank][bank])
-                        if(is_precharge_allowed(channel, rank, bank))
-                            if(issue_precharge_command(channel, rank, bank))
-                                recent_colacc[channel][rank][bank] = 0;
+
+					if(should_pre)
+                        issue_autoprecharge(channel, rank, bank);
 					break;
 				}
 			}
