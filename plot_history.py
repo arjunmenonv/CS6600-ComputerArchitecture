@@ -4,8 +4,8 @@ import pandas as pd
 
 data = pd.read_csv("output/polHist.csv", header= None)
 data.drop_duplicates(subset= None, inplace= True)
-start = 150000
-last1 = start + 50000
+start = 15000
+last1 = start + 5000
 last2 = start + 50
 slicedX1 = data[0][start:last1]
 slicedY1 = data[1][start:last1]

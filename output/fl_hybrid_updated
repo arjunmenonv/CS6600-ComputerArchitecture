@@ -3,10 +3,10 @@
 --              Version: 1.3               --
 ---------------------------------------------
 Initializing.
-Core 0: Input trace file input/traces/freq : Addresses will have prefix 0
-Core 1: Input trace file input/traces/freq : Addresses will have prefix 1
-Core 2: Input trace file input/traces/freq : Addresses will have prefix 2
-Core 3: Input trace file input/traces/freq : Addresses will have prefix 3
+Core 0: Input trace file input/traces/fluid : Addresses will have prefix 0
+Core 1: Input trace file input/traces/fluid : Addresses will have prefix 1
+Core 2: Input trace file input/traces/fluid : Addresses will have prefix 2
+Core 3: Input trace file input/traces/fluid : Addresses will have prefix 3
 Reading vi file: 4Gb_x8.vi	
 8 Chips per Rank
 ----------------------------------------------------------------------------------------
@@ -79,53 +79,53 @@ WQ_LOOKUP_LATENCY:              10
 ----------------------------------------------------------------------------------------
 Starting simulation.
 Done with loop. Printing stats.
-Cycles 186187537
-Done: Core 0: Fetched 500758887 : Committed 500758887 : At time : 184480353
-Done: Core 1: Fetched 500758887 : Committed 500758887 : At time : 185503309
-Done: Core 2: Fetched 500758887 : Committed 500758887 : At time : 186187537
-Done: Core 3: Fetched 500758887 : Committed 500758887 : At time : 186185105
-Sum of execution times for all programs: 742356304
-Num reads merged: 3664
+Cycles 290959741
+Done: Core 0: Fetched 751341173 : Committed 751341173 : At time : 288656984
+Done: Core 1: Fetched 751341173 : Committed 751341173 : At time : 290828552
+Done: Core 2: Fetched 751341173 : Committed 751341173 : At time : 290878632
+Done: Core 3: Fetched 751341173 : Committed 751341173 : At time : 290959741
+Sum of execution times for all programs: 1161323909
+Num reads merged: 5978
 Num writes merged: 0
 -------- Channel 0 Stats-----------
-Total Reads Serviced :          1528772
-Total Writes Serviced :         767780 
-Average Read Latency :          185.47832
-Average Read Queue Latency :    125.47832
-Average Write Latency :         1656.02894
-Average Write Queue Latency :   1592.02894
-Read Page Hit Rate :            0.00089
-Write Page Hit Rate :           -0.45494
+Total Reads Serviced :          2344938
+Total Writes Serviced :         1356468
+Average Read Latency :          200.83330
+Average Read Queue Latency :    140.83330
+Average Write Latency :         1596.09704
+Average Write Queue Latency :   1532.09704
+Read Page Hit Rate :            -0.00195
+Write Page Hit Rate :           -0.41417
 ------------------------------------
 -------- Channel 1 Stats-----------
-Total Reads Serviced :          1438345
-Total Writes Serviced :         700316 
-Average Read Latency :          173.24674
-Average Read Queue Latency :    113.24674
-Average Write Latency :         1498.22305
-Average Write Queue Latency :   1434.22305
-Read Page Hit Rate :            0.00134
-Write Page Hit Rate :           -0.45098
+Total Reads Serviced :          2185019
+Total Writes Serviced :         1252024
+Average Read Latency :          183.94728
+Average Read Queue Latency :    123.94728
+Average Write Latency :         1449.31242
+Average Write Queue Latency :   1385.31242
+Read Page Hit Rate :            -0.00027
+Write Page Hit Rate :           -0.41555
 ------------------------------------
 -------- Channel 2 Stats-----------
-Total Reads Serviced :          1528281
-Total Writes Serviced :         742780 
-Average Read Latency :          187.70062
-Average Read Queue Latency :    127.70062
-Average Write Latency :         1720.05830
-Average Write Queue Latency :   1656.05830
-Read Page Hit Rate :            0.00078
-Write Page Hit Rate :           -0.46913
+Total Reads Serviced :          2317697
+Total Writes Serviced :         1315652
+Average Read Latency :          194.62097
+Average Read Queue Latency :    134.62097
+Average Write Latency :         1560.01910
+Average Write Queue Latency :   1496.01910
+Read Page Hit Rate :            -0.00183
+Write Page Hit Rate :           -0.42489
 ------------------------------------
 -------- Channel 3 Stats-----------
-Total Reads Serviced :          1448562
-Total Writes Serviced :         701892 
-Average Read Latency :          173.23400
-Average Read Queue Latency :    113.23400
-Average Write Latency :         1506.56818
-Average Write Queue Latency :   1442.56818
-Read Page Hit Rate :            0.00139
-Write Page Hit Rate :           -0.45270
+Total Reads Serviced :          2159644
+Total Writes Serviced :         1234788
+Average Read Latency :          183.55349
+Average Read Queue Latency :    123.55349
+Average Write Latency :         1435.37294
+Average Write Queue Latency :   1371.37294
+Read Page Hit Rate :            -0.00025
+Write Page Hit Rate :           -0.40568
 ------------------------------------
 
 #-----------------------------Simulated Cycles Break-Up-------------------------------------------
@@ -134,29 +134,29 @@ Note:  1.(Read Cycles + Write Cycles + Read Other + Write Other) should add up t
        2.(PRE_PDN_FAST + PRE_PDN_SLOW + ACT_PDN + ACT_STBY + PRE_STBY) should add up to 100%
        3.Power Down means Clock Enable, CKE = 0. In Standby mode, CKE = 1
 #-------------------------------------------------------------------------------------------------
-Total Simulation Cycles                        186187537
+Total Simulation Cycles                        290959741
 ---------------------------------------------------------------
 
 Channel 0 Rank 0 Read Cycles(%)                0.07 # % cycles the Rank performed a Read
-Channel 0 Rank 0 Write Cycles(%)               0.03 # % cycles the Rank performed a Write
+Channel 0 Rank 0 Write Cycles(%)               0.04 # % cycles the Rank performed a Write
 Channel 0 Rank 0 Read Other(%)                 0.06 # % cycles other Ranks on the channel performed a Read
-Channel 0 Rank 0 Write Other(%)                0.03 # % cycles other Ranks on the channel performed a Write
+Channel 0 Rank 0 Write Other(%)                0.04 # % cycles other Ranks on the channel performed a Write
 Channel 0 Rank 0 PRE_PDN_FAST(%)               0.00 # % cycles the Rank was in Fast Power Down and all Banks were Precharged
 Channel 0 Rank 0 PRE_PDN_SLOW(%)               0.00 # % cycles the Rank was in Slow Power Down and all Banks were Precharged
 Channel 0 Rank 0 ACT_PDN(%)                    0.00 # % cycles the Rank was in Active Power Down and atleast one Bank was Active
-Channel 0 Rank 0 ACT_STBY(%)                   0.50 # % cycles the Rank was in Standby and atleast one bank was Active
-Channel 0 Rank 0 PRE_STBY(%)                   0.50 # % cycles the Rank was in Standby and all Banks were Precharged
+Channel 0 Rank 0 ACT_STBY(%)                   0.49 # % cycles the Rank was in Standby and atleast one bank was Active
+Channel 0 Rank 0 PRE_STBY(%)                   0.51 # % cycles the Rank was in Standby and all Banks were Precharged
 ---------------------------------------------------------------
 
 Channel 0 Rank 1 Read Cycles(%)                0.06 # % cycles the Rank performed a Read
-Channel 0 Rank 1 Write Cycles(%)               0.03 # % cycles the Rank performed a Write
+Channel 0 Rank 1 Write Cycles(%)               0.04 # % cycles the Rank performed a Write
 Channel 0 Rank 1 Read Other(%)                 0.07 # % cycles other Ranks on the channel performed a Read
-Channel 0 Rank 1 Write Other(%)                0.03 # % cycles other Ranks on the channel performed a Write
+Channel 0 Rank 1 Write Other(%)                0.04 # % cycles other Ranks on the channel performed a Write
 Channel 0 Rank 1 PRE_PDN_FAST(%)               0.00 # % cycles the Rank was in Fast Power Down and all Banks were Precharged
 Channel 0 Rank 1 PRE_PDN_SLOW(%)               0.00 # % cycles the Rank was in Slow Power Down and all Banks were Precharged
 Channel 0 Rank 1 ACT_PDN(%)                    0.00 # % cycles the Rank was in Active Power Down and atleast one Bank was Active
-Channel 0 Rank 1 ACT_STBY(%)                   0.49 # % cycles the Rank was in Standby and atleast one bank was Active
-Channel 0 Rank 1 PRE_STBY(%)                   0.51 # % cycles the Rank was in Standby and all Banks were Precharged
+Channel 0 Rank 1 ACT_STBY(%)                   0.48 # % cycles the Rank was in Standby and atleast one bank was Active
+Channel 0 Rank 1 PRE_STBY(%)                   0.52 # % cycles the Rank was in Standby and all Banks were Precharged
 ---------------------------------------------------------------
 
 Channel 1 Rank 0 Read Cycles(%)                0.06 # % cycles the Rank performed a Read
@@ -177,30 +177,30 @@ Channel 1 Rank 1 Write Other(%)                0.03 # % cycles other Ranks on th
 Channel 1 Rank 1 PRE_PDN_FAST(%)               0.00 # % cycles the Rank was in Fast Power Down and all Banks were Precharged
 Channel 1 Rank 1 PRE_PDN_SLOW(%)               0.00 # % cycles the Rank was in Slow Power Down and all Banks were Precharged
 Channel 1 Rank 1 ACT_PDN(%)                    0.00 # % cycles the Rank was in Active Power Down and atleast one Bank was Active
-Channel 1 Rank 1 ACT_STBY(%)                   0.46 # % cycles the Rank was in Standby and atleast one bank was Active
-Channel 1 Rank 1 PRE_STBY(%)                   0.54 # % cycles the Rank was in Standby and all Banks were Precharged
+Channel 1 Rank 1 ACT_STBY(%)                   0.45 # % cycles the Rank was in Standby and atleast one bank was Active
+Channel 1 Rank 1 PRE_STBY(%)                   0.55 # % cycles the Rank was in Standby and all Banks were Precharged
 ---------------------------------------------------------------
 
-Channel 2 Rank 0 Read Cycles(%)                0.07 # % cycles the Rank performed a Read
-Channel 2 Rank 0 Write Cycles(%)               0.03 # % cycles the Rank performed a Write
+Channel 2 Rank 0 Read Cycles(%)                0.06 # % cycles the Rank performed a Read
+Channel 2 Rank 0 Write Cycles(%)               0.04 # % cycles the Rank performed a Write
 Channel 2 Rank 0 Read Other(%)                 0.06 # % cycles other Ranks on the channel performed a Read
-Channel 2 Rank 0 Write Other(%)                0.03 # % cycles other Ranks on the channel performed a Write
+Channel 2 Rank 0 Write Other(%)                0.04 # % cycles other Ranks on the channel performed a Write
 Channel 2 Rank 0 PRE_PDN_FAST(%)               0.00 # % cycles the Rank was in Fast Power Down and all Banks were Precharged
 Channel 2 Rank 0 PRE_PDN_SLOW(%)               0.00 # % cycles the Rank was in Slow Power Down and all Banks were Precharged
 Channel 2 Rank 0 ACT_PDN(%)                    0.00 # % cycles the Rank was in Active Power Down and atleast one Bank was Active
-Channel 2 Rank 0 ACT_STBY(%)                   0.49 # % cycles the Rank was in Standby and atleast one bank was Active
-Channel 2 Rank 0 PRE_STBY(%)                   0.51 # % cycles the Rank was in Standby and all Banks were Precharged
+Channel 2 Rank 0 ACT_STBY(%)                   0.48 # % cycles the Rank was in Standby and atleast one bank was Active
+Channel 2 Rank 0 PRE_STBY(%)                   0.52 # % cycles the Rank was in Standby and all Banks were Precharged
 ---------------------------------------------------------------
 
 Channel 2 Rank 1 Read Cycles(%)                0.06 # % cycles the Rank performed a Read
-Channel 2 Rank 1 Write Cycles(%)               0.03 # % cycles the Rank performed a Write
-Channel 2 Rank 1 Read Other(%)                 0.07 # % cycles other Ranks on the channel performed a Read
-Channel 2 Rank 1 Write Other(%)                0.03 # % cycles other Ranks on the channel performed a Write
+Channel 2 Rank 1 Write Cycles(%)               0.04 # % cycles the Rank performed a Write
+Channel 2 Rank 1 Read Other(%)                 0.06 # % cycles other Ranks on the channel performed a Read
+Channel 2 Rank 1 Write Other(%)                0.04 # % cycles other Ranks on the channel performed a Write
 Channel 2 Rank 1 PRE_PDN_FAST(%)               0.00 # % cycles the Rank was in Fast Power Down and all Banks were Precharged
 Channel 2 Rank 1 PRE_PDN_SLOW(%)               0.00 # % cycles the Rank was in Slow Power Down and all Banks were Precharged
 Channel 2 Rank 1 ACT_PDN(%)                    0.00 # % cycles the Rank was in Active Power Down and atleast one Bank was Active
-Channel 2 Rank 1 ACT_STBY(%)                   0.49 # % cycles the Rank was in Standby and atleast one bank was Active
-Channel 2 Rank 1 PRE_STBY(%)                   0.51 # % cycles the Rank was in Standby and all Banks were Precharged
+Channel 2 Rank 1 ACT_STBY(%)                   0.47 # % cycles the Rank was in Standby and atleast one bank was Active
+Channel 2 Rank 1 PRE_STBY(%)                   0.53 # % cycles the Rank was in Standby and all Banks were Precharged
 ---------------------------------------------------------------
 
 Channel 3 Rank 0 Read Cycles(%)                0.06 # % cycles the Rank performed a Read
@@ -210,8 +210,8 @@ Channel 3 Rank 0 Write Other(%)                0.03 # % cycles other Ranks on th
 Channel 3 Rank 0 PRE_PDN_FAST(%)               0.00 # % cycles the Rank was in Fast Power Down and all Banks were Precharged
 Channel 3 Rank 0 PRE_PDN_SLOW(%)               0.00 # % cycles the Rank was in Slow Power Down and all Banks were Precharged
 Channel 3 Rank 0 ACT_PDN(%)                    0.00 # % cycles the Rank was in Active Power Down and atleast one Bank was Active
-Channel 3 Rank 0 ACT_STBY(%)                   0.48 # % cycles the Rank was in Standby and atleast one bank was Active
-Channel 3 Rank 0 PRE_STBY(%)                   0.52 # % cycles the Rank was in Standby and all Banks were Precharged
+Channel 3 Rank 0 ACT_STBY(%)                   0.46 # % cycles the Rank was in Standby and atleast one bank was Active
+Channel 3 Rank 0 PRE_STBY(%)                   0.54 # % cycles the Rank was in Standby and all Banks were Precharged
 ---------------------------------------------------------------
 
 Channel 3 Rank 1 Read Cycles(%)                0.06 # % cycles the Rank performed a Read
@@ -221,7 +221,7 @@ Channel 3 Rank 1 Write Other(%)                0.03 # % cycles other Ranks on th
 Channel 3 Rank 1 PRE_PDN_FAST(%)               0.00 # % cycles the Rank was in Fast Power Down and all Banks were Precharged
 Channel 3 Rank 1 PRE_PDN_SLOW(%)               0.00 # % cycles the Rank was in Slow Power Down and all Banks were Precharged
 Channel 3 Rank 1 ACT_PDN(%)                    0.00 # % cycles the Rank was in Active Power Down and atleast one Bank was Active
-Channel 3 Rank 1 ACT_STBY(%)                   0.47 # % cycles the Rank was in Standby and atleast one bank was Active
-Channel 3 Rank 1 PRE_STBY(%)                   0.53 # % cycles the Rank was in Standby and all Banks were Precharged
+Channel 3 Rank 1 ACT_STBY(%)                   0.45 # % cycles the Rank was in Standby and atleast one bank was Active
+Channel 3 Rank 1 PRE_STBY(%)                   0.55 # % cycles the Rank was in Standby and all Banks were Precharged
 ---------------------------------------------------------------
 
