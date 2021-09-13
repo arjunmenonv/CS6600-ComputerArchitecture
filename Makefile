@@ -2,8 +2,13 @@ MMU = src/main.py
 LIBS = inc/*.py
 REQ = requirements.txt
 
+all: env clean mmu
+
 env: $(REQ)
 	pip install -r $(REQ)
+
+mmu: $(MMU) $(LIBS)
+	python3 $(MMU)
 
 .PHONY: clean
 clean:
