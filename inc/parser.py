@@ -1,15 +1,8 @@
 '''
-Request file parser module
-
-Takes input file, with read/write requests
-in the following format and converts them to
-a list of requests of type request
-
-<pid> <virtual address in hex> <type>
-
+Input file parser module
 
 '''
-from memRequest import memReq
+from inc.memRequest import memReq
 
 class inputParser:
     '''
@@ -17,14 +10,21 @@ class inputParser:
 
     Functions
     ---------
-    parse(): returns list[memReq], from file
-    self.inputFile
+    parse(): returns list[memReq], from file self.inputFile
 
     '''
     def __init__(self, file):
         self.inputFile = file
 
     def parse(self):
+        '''
+        Takes input file, with read/write requests
+        in the following format and converts them to
+        a list of requests of type request
+
+        pid address type
+
+        '''
         requests = []
         with open(self.inputFile, "r") as f:
             for line in f:
