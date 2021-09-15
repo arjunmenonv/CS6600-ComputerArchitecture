@@ -1,16 +1,16 @@
-MMU = src/main.py
-LIBS = inc/*.py
-REQ = requirements.txt
+MEM_REQUESTS = inc/memRequest.py
+PARSER = inc/parser.py
+REQUIREMENTS = requirements.txt
 
-all: env clean mmu
+all: env clean
 
-env: $(REQ)
-	pip install -r $(REQ)
+env:
+	@pip install -r $(REQUIREMENTS)
 
-mmu: $(MMU) $(LIBS)
-	python3 $(MMU)
+parser:
+	@python3 $(PARSER)
 
 .PHONY: clean
 clean:
-	find . -type f -name ‘*.pyc’ -delete
-	find . -type f -name ‘*.pyo’ -delete
+	find . -type f -name "*.pyc" -delete
+	find . -type f -name "*.pyo" -delete
