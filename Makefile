@@ -12,7 +12,7 @@ parser:
 	@python3 $(PARSER)
 
 run:
-	@python3 $(SIMULATOR)
+	@python3 $(SIMULATOR) -i input/$(input)
 
 .PHONY: clean
 clean:
