@@ -2,6 +2,7 @@
 Memory Request module
 
 '''
+
 class memReq:
     '''
     Structure to store PID, va, type of memory request
@@ -15,6 +16,7 @@ class memReq:
         self.pid = pid
         self.va = virtAddr
         self.typ = reqType
+
     def print(self):
         '''
         Print the contents of the request as:

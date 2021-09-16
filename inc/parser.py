@@ -2,7 +2,7 @@
 Input file parser module
 
 '''
-from inc.memRequest import memReq
+from src.memRequest import memReq
 
 class inputParser:
     '''
