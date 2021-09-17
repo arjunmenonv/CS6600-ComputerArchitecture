@@ -3,6 +3,8 @@ PARSER = inc/parser.py
 REQUIREMENTS = requirements.txt
 SIMULATOR = src/main.py
 
+input?=input.txt
+
 all: clean run
 
 env:
