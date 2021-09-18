@@ -3,6 +3,8 @@ Memory Request module
 
 '''
 
+from src.translator import translate
+
 class memReq:
     '''
     Structure to store PID, va, type of memory request
@@ -23,4 +25,5 @@ class memReq:
         PID: {}    Virtual Address: {}    Type: {}
 
         '''
-        print("PID: {0}\t Virtual Address: {1}\t Type: {2}".format(self.pid, self.va, self.typ))
+        offsets = translate(self.va)
+        print("PID: {0}\tdirOffset: {1}\ttableOffset: {2}".format(self.pid, offsets[0], offsets[1]))
