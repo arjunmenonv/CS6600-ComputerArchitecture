@@ -45,27 +45,29 @@ class memory:
     def __init__(self, numFrames= 768, entriesPerFrame = 4096, memType= "user"):
         self.numFrames = numFrames
         self.memType= memType
-        self.mem = np.zeros((self.numFrames, entriesPerFrame), dtype= int)
+        #self.mem = np.zeros((self.numFrames, entriesPerFrame), dtype= int)
+        # self.numFrames rows and entriesPerFrame cols
+        self.mem = [[None for j in range(entriesPerFrame)] for i in range(self.numFrames)]
         self.LRUctr = (-1)*np.ones(self.numFrames, dtype= int)
         if(self.memType == "user"):
             self.freeFrames = Q(self.numFrames)
             # initialise FIFO to include all page frames
             for i in range(self.numFrames):
-                self.freeFrames.put(i)          
+                self.freeFrames.put(i)
         else:
             if (self.numFrames <= NPROC):
                 print("Insufficient space allocated to MMU in Kernel Space, exiting!")
                 exit(-1)
-            self.valid = np.zeros((self.numFrames, entriesPerFrame), dtype= bool)
+            #self.valid = np.zeros((self.numFrames, entriesPerFrame), dtype= bool)
             self.freeFrames = Q(self.numFrames-NPROC)
             for i in range(NPROC, self.numFrames): # page directories cannot be replaced
-                self.freeFrames.put(i)          
+                self.freeFrames.put(i)
 
     def updateLRU(self, hitPage):
         currCount = self.LRUctr[hitPage]
         if (currCount == -1): # page was previously free, inc LRUctr of all active frames by 1
             if((self.memType == "user") or (hitPage >= NPROC)): # PDframes not present in FIFO
-                self.updateFIFO(hitPage)
+                self.__updateFIFO(hitPage)
             for i in range(self.numFrames):
                 if(self.LRUctr[i] != -1):
                     self.LRUctr[i] += 1
@@ -77,7 +79,7 @@ class memory:
         self.LRUctr[hitPage] = 0
         return 0
 
-    def updateFIFO(self, hitPage):
+    def __updateFIFO(self, hitPage):
         # update free frames by removing the hit page(if it exists) from them
         tempSize = self.freeFrames.qsize()
         temp = Q(tempSize)
@@ -105,13 +107,21 @@ class memory:
 
     def invalidateEntry(self, targType, victim):
         if (self.memType == "kernel"):
-            if (targType == "user"): # update valid field in PTE
-                frame, entry = np.where((self.mem[NPROC:][:] == victim)) # search amongst PTEs
-                frame = frame[0]; entry = entry[0]
-                self.valid[frame][entry] = 0    #invalidate
+            if (targType == "user"):   # update valid field in PTE
+                try:
+                    frame, entry = np.where((self.mem[NPROC:][:] == victim)) # search amongst PTEs
+                    frame = frame[0]; entry = entry[0]
+                    #self.valid[frame][entry] = 0    #invalidate
+                    self.mem[frame][entry] = None
+                    retVal = 0
+                except: # if page Table is missing, frame = frame[0] will raise exception
+                    retVal = 1
+                return retVal
             else:
                 frame, entry = np.where((self.mem[0:NPROC][:] == victim)) # search amongst PDEs
                 frame = frame[0]; entry = entry[0]
-                self.valid[frame][entry] = 0
-            return 0
+                #self.valid[frame][entry] = 0
+                self.mem[frame][entry] = None
+                retVec = [1, frame, entry]
+                return retVec
         return -1
