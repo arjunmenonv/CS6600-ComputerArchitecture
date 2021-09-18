@@ -6,7 +6,7 @@ class proc:
         self.pTableMisses = 0
         self.pageHits = 0
         self.pageMisses = 0
-        self.pTableCopy = [None]*1024   # Helper array to model copy of page Table in disk
+        self.pTableCopy = [[None]*1024]*1024   # Helper array to model copy of page Table in disk
 
     def pagewalk(self, kernelMem, userMem, offsets):
         dirOffset = offsets[0]
