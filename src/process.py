@@ -32,7 +32,7 @@ class proc:
             pMiss = True
             if userMem.freeFrames.empty():
                 evictedUserFrame = userMem.evictFrame()
-                userMem.invalidateEntry("user", evictedUserFrame)
+                kernelMem.invalidateEntry("user", evictedUserFrame)
             mappedUserFrame = userMem.freeFrames.get()
             pTable[tabOffset] = mappedUserFrame
 
