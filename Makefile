@@ -3,7 +3,7 @@ PARSER = inc/parser.py
 REQUIREMENTS = requirements.txt
 SIMULATOR = src/main.py
 
-input?=input.txt
+input?=input/input.txt
 
 all: clean run
 
@@ -14,7 +14,7 @@ parser:
 	@python3 $(PARSER)
 
 run:
-	@python3 $(SIMULATOR) -i input/$(input)
+	@python3 $(SIMULATOR) -i $(input)
 
 .PHONY: clean
 clean:
