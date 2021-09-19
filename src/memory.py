@@ -36,29 +36,21 @@ class memory:
     freeFrames: Queue
         FIFO to maintain free pages in memory
 
-    valid: 2D array (int)
-        PRESENT ONLY FOR KERNEL MEMORY!!!
-        indicates whether the page pointed to by the
-        entry is in memory or not
-
     '''
     def __init__(self, numFrames= 768, entriesPerFrame = 4096, memType= "user"):
         self.numFrames = numFrames
         self.memType= memType
-        #self.mem = np.zeros((self.numFrames, entriesPerFrame), dtype= int)
-        # self.numFrames rows and entriesPerFrame cols
         self.mem = [[None for j in range(entriesPerFrame)] for i in range(self.numFrames)]
         self.LRUctr = (-1)*np.ones(self.numFrames, dtype= int)
         if(self.memType == "user"):
             self.freeFrames = Q(self.numFrames)
-            # initialise FIFO to include all page frames
+            # initialise freeFrames to include all page frames
             for i in range(self.numFrames):
                 self.freeFrames.put(i)
         else:
             if (self.numFrames <= NPROC):
                 print("Insufficient space allocated to MMU in Kernel Space, exiting!")
                 exit(-1)
-            #self.valid = np.zeros((self.numFrames, entriesPerFrame), dtype= bool)
             self.freeFrames = Q(self.numFrames-NPROC)
             for i in range(NPROC, self.numFrames): # page directories cannot be replaced
                 self.freeFrames.put(i)
@@ -66,8 +58,8 @@ class memory:
     def updateLRU(self, hitPage):
         currCount = self.LRUctr[hitPage]
         if (currCount == -1): # page was previously free, inc LRUctr of all active frames by 1
-            if((self.memType == "user") or (hitPage >= NPROC)): # PDframes not present in FIFO
-                self.__updateFIFO(hitPage)
+            if((self.memType == "user") or (hitPage >= NPROC)): # PDframes not present in FreeFrames
+                self.__updateFreeFrames(hitPage)
             for i in range(self.numFrames):
                 if(self.LRUctr[i] != -1):
                     self.LRUctr[i] += 1
@@ -79,7 +71,7 @@ class memory:
         self.LRUctr[hitPage] = 0
         return 0
 
-    def __updateFIFO(self, hitPage):
+    def __updateFreeFrames(self, hitPage):
         # update free frames by removing the hit page(if it exists) from them
         tempSize = self.freeFrames.qsize()
         temp = Q(tempSize)
@@ -89,10 +81,9 @@ class memory:
                 temp.put(tempVal)
         for i in range(tempSize-1):
             self.freeFrames.put(temp.get())
-        return 0
 
     def evictFrame(self):
-        # Call this ONLY IF FIFO is empty
+        # Call this ONLY IF FreeFrames is empty
         if (self.freeFrames.empty()):
             if (self.memType == "user"):
                 victimFrame = np.argmax(self.LRUctr)
@@ -111,7 +102,6 @@ class memory:
                 try:
                     frame, entry = np.where((self.mem[NPROC:][:] == victim)) # search amongst PTEs
                     frame = frame[0]; entry = entry[0]
-                    #self.valid[frame][entry] = 0    #invalidate
                     self.mem[frame][entry] = None
                     retVal = 0
                 except: # if page Table is missing, frame = frame[0] will raise exception
@@ -120,7 +110,6 @@ class memory:
             else:
                 frame, entry = np.where((self.mem[0:NPROC][:] == victim)) # search amongst PDEs
                 frame = frame[0]; entry = entry[0]
-                #self.valid[frame][entry] = 0
                 self.mem[frame][entry] = None
                 retVec = [1, frame, entry]
                 return retVec
