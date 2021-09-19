@@ -1,16 +1,22 @@
-MMU = src/main.py
-LIBS = inc/*.py
-REQ = requirements.txt
+MEM_REQUESTS = src/memRequest.py
+PARSER = inc/parser.py
+REQUIREMENTS = requirements.txt
+SIMULATOR = src/main.py
 
-all: env clean mmu
+input?=input.txt
 
-env: $(REQ)
-	pip install -r $(REQ)
+all: clean run
 
-mmu: $(MMU) $(LIBS)
-	python3 $(MMU)
+env:
+	@pip install -r $(REQUIREMENTS)
+
+parser:
+	@python3 $(PARSER)
+
+run:
+	@python3 $(SIMULATOR) -i input/$(input)
 
 .PHONY: clean
 clean:
-	find . -type f -name ‘*.pyc’ -delete
-	find . -type f -name ‘*.pyo’ -delete
+	find . -type f -name "*.pyc" -delete
+	find . -type f -name "*.pyo" -delete
