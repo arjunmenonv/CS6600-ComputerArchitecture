@@ -7,6 +7,7 @@ Main Module: - Create kernel memory, user memory and process objects
              - Call functions for pagewalk, page eviction (LRU policy) and writing evicted PageTable
                back to Disk (WriteBack policy)
 '''
+import numpy as np
 import argparse as ap
 from inc.opts import *
 from inc.parser import inputParser
@@ -69,7 +70,6 @@ def main():
                     if pr.pid == evictedPID:
                         pr.pTableCopy[evictedOffset] = evictedTable
 
-
         if rv2[0] != 0:
             evictedUserFrame = rv2[1]
             for pr in activeProcesses:
@@ -78,7 +78,6 @@ def main():
                         for entry in table:
                             if entry == evictedUserFrame:
                                 entry = None
-
 
     for p in activeProcesses:
         if p != None:
@@ -96,6 +95,18 @@ def main():
             totalTableReplacements += p.tableEvictions
     print('Dirty Page Evictions: {}'.format(totalPageReplacements))
     print('Dirty Table Evictions: {}'.format(totalTableReplacements))
+
+    totalKernelPFUsed = max(kernelMem.LRUctr)+1
+    totalUserPFUsed = max(userMem.LRUctr)+1
+    numActiveProcesses = 0
+    for p in activeProcesses:
+        if p != None:
+            numActiveProcesses += 1
+    print(totalKernelPFUsed)
+    print(totalUserPFUsed)
+    print(numActiveProcesses)
+    print('Final number of pageframes used: {}'.format(totalKernelPFUsed+totalUserPFUsed+numActiveProcesses))
+
 
 if __name__=="__main__":
     main()
