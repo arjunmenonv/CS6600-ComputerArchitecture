@@ -2,6 +2,7 @@ MEM_REQUESTS = src/memRequest.py
 PARSER = inc/parser.py
 REQUIREMENTS = requirements.txt
 SIMULATOR = src/main.py
+PWD = $(shell pwd)
 
 input?=input/input.txt
 
@@ -9,6 +10,7 @@ all: clean run
 
 env:
 	@pip install -r $(REQUIREMENTS)
+	@source env.sh
 
 parser:
 	@python3 $(PARSER)
