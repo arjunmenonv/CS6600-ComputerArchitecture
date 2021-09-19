@@ -96,16 +96,15 @@ def main():
     print('Dirty Page Evictions: {}'.format(totalPageReplacements))
     print('Dirty Table Evictions: {}'.format(totalTableReplacements))
 
-    totalKernelPFUsed = max(kernelMem.LRUctr)+1
+    totalKernelPFUsed = max(kernelMem.LRUctr)+1 # count starts from 0
     totalUserPFUsed = max(userMem.LRUctr)+1
     numActiveProcesses = 0
     for p in activeProcesses:
         if p != None:
             numActiveProcesses += 1
-    print(totalKernelPFUsed)
-    print(totalUserPFUsed)
-    print(numActiveProcesses)
     print('Final number of pageframes used: {}'.format(totalKernelPFUsed+totalUserPFUsed+numActiveProcesses))
+    print('\tKernel pageframes: {}'.format(totalKernelPFUsed+numActiveProcesses))
+    print('\tUser pageframes: {}'.format(totalUserPFUsed))
 
 
 if __name__=="__main__":
