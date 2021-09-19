@@ -10,7 +10,7 @@ all: clean run
 
 env:
 	@pip install -r $(REQUIREMENTS)
-	@source env.sh
+	@. ./env.sh
 
 parser:
 	@python3 $(PARSER)
