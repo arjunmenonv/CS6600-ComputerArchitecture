@@ -57,7 +57,10 @@ def main():
             evictedUserFrame = rv2[1]
             for pr in activeProcesses:
                 if pr != None:
-                    pr.pTableCopy[pr.pTableCopy == evictedUserFrame] = None
+                    for table in pr.TableCopy: 
+                        for entry in table:
+                            if entry == evictedUserFrame:
+                                entry = None
 
         
     for p in activeProcesses:
