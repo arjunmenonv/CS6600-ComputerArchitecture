@@ -12,8 +12,8 @@ env:
 	@pip install -r $(REQUIREMENTS)
 	@. ./env.sh
 
-parser:
-	@python3 $(PARSER)
+pdf:
+	$(MAKE) -C doc pdf
 
 run:
 	@python3 $(SIMULATOR) -i $(input)
@@ -22,3 +22,4 @@ run:
 clean:
 	find . -type f -name "*.pyc" -delete
 	find . -type f -name "*.pyo" -delete
+	$(MAKE) -C doc clean

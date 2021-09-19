@@ -1,0 +1,12 @@
+Total Requests: 36
+Hit Rate: 41.67%
+Miss Rate: 58.33%
+Read Requests: 18
+Write Requests: 18
+PID 1: 26 requests
+PID 2: 10 requests
+Dirty Page Evictions: 0
+Dirty Table Evictions: 13
+Final number of pageframes used: 37
+    Kernel pageframes: 16
+    User pageframes: 21
