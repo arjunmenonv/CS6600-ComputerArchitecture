@@ -1,3 +1,10 @@
+'''
+MMU Simulator in python
+Assignment 3, Computer Architecture
+Authors: Akilesh K, Arjun Menon V
+Sept 2021
+Class Definition for the proc module
+'''
 import numpy as np
 
 class proc:

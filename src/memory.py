@@ -4,10 +4,6 @@ Assignment 3, Computer Architecture
 Authors: Akilesh K, Arjun Menon V
 Sept 2021
 Class Definition for the memory module
-Notes: - 'mem' array in memory objects of "user" type has granularity of 1 byte,
-         while in objects of "kernel" type, the granularity is 4 bytes
-       - Assumption: First NPROC frames in kernel space are allocated to Page Directories
-       - evictframe() returns victim frame number; use this to update PDEvalid or PTEvalid from pagewalk()
 '''
 from sys import exit
 import numpy as np
@@ -79,7 +75,8 @@ class memory:
             tempVal = self.freeFrames.get()
             if(tempVal != hitPage):
                 temp.put(tempVal)
-        for i in range(tempSize-1):
+        tempSize = temp.qsize()
+        for i in range(tempSize):
             self.freeFrames.put(temp.get())
 
     def evictFrame(self):
@@ -91,6 +88,7 @@ class memory:
                 self.LRUctr[victimFrame] = -1
             else:
                 victimFrame = np.argmax(self.LRUctr[NPROC:-1]) # do not evict Page Directory
+                victimFrame += NPROC
                 self.freeFrames.put(victimFrame)
                 self.LRUctr[victimFrame] = -1
             return victimFrame
