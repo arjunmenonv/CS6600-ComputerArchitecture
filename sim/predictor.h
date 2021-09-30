@@ -23,7 +23,8 @@
 #define CPT_CTR_MAX  3
 #define CPT_CTR_INIT 2
 #define LPT_INIT     0
-#define CPT_INIT     1
+#define GHR_INIT     0
+//#define CPT_INIT     1
 
 #define GHIST_LEN   10
 #define LHIST_LEN   10
@@ -62,8 +63,9 @@ class PREDICTOR{
 
 
   PREDICTOR(void);
+  ~PREDICTOR();
   // The interface to the functions below CAN NOT be changed
-  bool    GetPrediction(UINT64 PC);  
+  bool    GetPrediction(UINT64 PC);
   void    UpdatePredictor(UINT64 PC, OpType opType, bool resolveDir, bool predDir, UINT64 branchTarget);
   void    TrackOtherInst(UINT64 PC, OpType opType, bool branchDir, UINT64 branchTarget);
 
@@ -71,11 +73,15 @@ class PREDICTOR{
 };
 
 /////////////// STORAGE BUDGET JUSTIFICATION ////////////////
-// Total storage budget: 32KB + 17 bits
-// Total GHT counters: 2^17 
-// Total GHT size = 2^17 * 2 bits/counter = 2^18 bits = 32KB
-// GHR size: 17 bits
-// Total Size = GHT size + GHR size
+// Total storage budget:
+// Total GHT counters:
+// Total GHT size =
+// GHR size:
+// Total LHT counters:
+// Total LHT size =
+// Total LPT size =
+// Total CHT size =
+// Total Size = GHT size + GHR size + LHT size + LPT size + CHT size
 /////////////////////////////////////////////////////////////
 
 
@@ -87,11 +93,11 @@ PREDICTOR::PREDICTOR(void){
 
   // Global Predictor
   globalHistoryLength    = GHIST_LEN;
-  ghr              	 = 0;
+  ghr              	 = GHR_INIT;
   numGhtEntries    	 = (1<< GHIST_LEN);
   ght 			 = new UINT32[numGhtEntries];
   for(UINT32 ii=0; ii< numGhtEntries; ii++)
-    ght[ii]=GHT_CTR_INIT; 
+    ght[ii]=GHT_CTR_INIT;
 
   // Local Predictor
   localPredictLength     = LPRED_LEN;
@@ -110,25 +116,60 @@ PREDICTOR::PREDICTOR(void){
   numCptEntries     	 = (1<< CPRED_LEN);
   cpt                	 = new UINT32[numCptEntries];
   for(UINT32 ii=0; ii< numCptEntries; ii++)
-    cpt[ii]=CPT_INIT;  
+    cpt[ii]=CPT_CTR_INIT;
 }
 
+PREDICTOR::~PREDICTOR(){
+  // Destructor to deallocate dynamically allocated memory
+  delete[] ght;
+  delete[] lht;
+  delete[] lpt;
+  delete[] cpt;
+  // And reset global history register (optional)
+  ghr = GHR_INIT;
+}
 /////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
 
 bool    PREDICTOR::GetPrediction(UINT64 PC){
+  /*
+    REMARK: Should PC be right-shifted by 2 (or log(sizeof(instr))) first?
+            - For current impl, check if there are registers in LPT that are never written
+  */
 
+  UINT32 lptIndex = (PC) % (numLptEntries);
+  UINT32 lhtIndex = lpt[lptIndex];
+  UINT32 lhtCounter = lht[lhtIndex];
+  bool lDecision = (lhtCounter > LHT_CTR_MAX/2) ? TAKEN : NOT_TAKEN;
+
+  UINT32 ghtIndex = (ghr) % (numGhtEntries);
+  UINT32 ghtCounter = ght[ghtIndex];
+  bool gDecision = (ghtCounter > GHT_CTR_MAX/2) ? TAKEN :  NOT_TAKEN;
+
+  UINT32 cptIndex = (ghr) % (numCptEntries);
+  UINT32 cptCounter = cpt[cptIndex];
+  bool cBias = (cptCounter > CPT_CTR_MAX/2) ? 1 : 0;
+
+  if (cBias){
+    return gDecision;
+  }
+  else {
+    return lDecision;
+  }
+
+/*
   UINT32 ghtIndex   = (PC^ghr) % (numGhtEntries);
   UINT32 ghtCounter = ght[ghtIndex];
 
 //  printf(" ghr: %x index: %x counter: %d prediction: %d\n", ghr, ghtIndex, ghtCounter, ghtCounter > GHT_CTR_MAX/2);
 
-  if(ghtCounter > (GHT_CTR_MAX/2)){ 
-    return TAKEN; 
+  if(ghtCounter > (GHT_CTR_MAX/2)){
+    return TAKEN;
   }
   else{
-    return NOT_TAKEN; 
+    return NOT_TAKEN;
   }
+  */
 }
 
 
@@ -136,15 +177,22 @@ bool    PREDICTOR::GetPrediction(UINT64 PC){
 /////////////////////////////////////////////////////////////
 
 void    PREDICTOR::UpdatePredictor(UINT64 PC, OpType opType, bool resolveDir, bool predDir, UINT64 branchTarget){
+  /*
+    REMARKS: - In hardware during update phase, the decision has to either be read again, or a data
+               structure addressable by PC (dict) holding predicted direction has to be maintained
 
+    Changes made by Arjun:
+      - GetPredictor() return type is bool; using bool for g/lDecision for consistency
+      - Decision assignment: > instead of >= (3/2 := 1)
+  */
   UINT32 ghtIndex   = (ghr) % (numGhtEntries);
   UINT32 ghtCounter = ght[ghtIndex];
-  UINT32 gDecision  = (ghtCounter >= GHT_CTR_MAX/2) ? TAKEN : NOT_TAKEN;
+  UINT32 gDecision  = (ghtCounter > GHT_CTR_MAX/2) ? TAKEN : NOT_TAKEN;
 
   UINT32 lptIndex   = (PC) % (numLptEntries);
   UINT32 lhtIndex   = lpt[lptIndex];
   UINT32 lhtCounter = lht[lhtIndex];
-  UINT32 lDecision  = (lhtCounter >= LHT_CTR_MAX/2) ? TAKEN : NOT_TAKEN;
+  UINT32 lDecision  = (lhtCounter > LHT_CTR_MAX/2) ? TAKEN : NOT_TAKEN;
 
   UINT32 cptIndex   = (ghr) % (numCptEntries);
   UINT32 cptCounter = cpt[cptIndex];
@@ -166,7 +214,7 @@ void    PREDICTOR::UpdatePredictor(UINT64 PC, OpType opType, bool resolveDir, bo
       cpt[cptIndex] = SatIncrement(cptCounter, CPT_CTR_MAX);
   }else{ // both agree
     if(lDecision == resolveDir){ // both are correct
-      if(cptCounter >= CPT_CTR_MAX/2) // make global even stronger
+      if(cptCounter > CPT_CTR_MAX/2) // make global even stronger
 	cpt[cptIndex] = SatIncrement(cptCounter, CPT_CTR_MAX);
       else
 	cpt[cptIndex] = SatDecrement(cptCounter);
@@ -178,7 +226,7 @@ void    PREDICTOR::UpdatePredictor(UINT64 PC, OpType opType, bool resolveDir, bo
   lpt[lptIndex] = lhtIndex << 1;
 
   if(resolveDir == TAKEN){
-    ghr++; 
+    ghr++;
     lpt[lptIndex]++;
   }
 }
@@ -202,4 +250,3 @@ void    PREDICTOR::TrackOtherInst(UINT64 PC, OpType opType, bool branchDir, UINT
 
 /***********************************************************/
 #endif
-

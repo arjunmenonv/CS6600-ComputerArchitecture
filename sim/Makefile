@@ -25,7 +25,7 @@
 # Include path to Boost area on local machine
 #
 #worked with both CENTOS and Ubuntu: export BOOST    := /usr/
-export BOOST    := /usr/
+export BOOST    := /usr
 #export BOOST    := /sarc/spa/tools/conda/envs/spa-1
 
 
