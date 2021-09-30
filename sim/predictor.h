@@ -20,6 +20,8 @@
 #define GHT_CTR_INIT 2
 #define LHT_CTR_MAX  3
 #define LHT_CTR_INIT 2
+#define CPT_CTR_MAX  3
+#define CPT_CTR_INIT 2
 #define LPT_INIT     0
 #define CPT_INIT     1
 
@@ -91,7 +93,6 @@ PREDICTOR::PREDICTOR(void){
   for(UINT32 ii=0; ii< numGhtEntries; ii++)
     ght[ii]=GHT_CTR_INIT; 
 
-
   // Local Predictor
   localPredictLength     = LPRED_LEN;
   localHistoryLength     = LHIST_LEN;
@@ -99,10 +100,10 @@ PREDICTOR::PREDICTOR(void){
   numLptEntries          = (1<< LPRED_LEN);
   lht                	 = new UINT32[numLhtEntries];
   lpt       		 = new UINT32[numLptEntries];
-  for(UINT32 ii=0; ii< numLhtEntries; ii++)
-    lht[ii]=LHT_CTR_INIT;
   for(UINT32 ii=0; ii< numLptEntries; ii++)
     lpt[ii]=LPT_INIT;
+  for(UINT32 ii=0; ii< numLhtEntries; ii++)
+    lht[ii]=LHT_CTR_INIT;
 
   // Choice Predictor
   choicePredictLength    = CPRED_LEN;
@@ -136,20 +137,49 @@ bool    PREDICTOR::GetPrediction(UINT64 PC){
 
 void    PREDICTOR::UpdatePredictor(UINT64 PC, OpType opType, bool resolveDir, bool predDir, UINT64 branchTarget){
 
-  UINT32 ghtIndex   = (PC^ghr) % (numGhtEntries);
+  UINT32 ghtIndex   = (ghr) % (numGhtEntries);
   UINT32 ghtCounter = ght[ghtIndex];
+  UINT32 gDecision  = (ghtCounter >= GHT_CTR_MAX/2) ? TAKEN : NOT_TAKEN;
 
+  UINT32 lptIndex   = (PC) % (numLptEntries);
+  UINT32 lhtIndex   = lpt[lptIndex];
+  UINT32 lhtCounter = lht[lhtIndex];
+  UINT32 lDecision  = (lhtCounter >= LHT_CTR_MAX/2) ? TAKEN : NOT_TAKEN;
+
+  UINT32 cptIndex   = (ghr) % (numCptEntries);
+  UINT32 cptCounter = cpt[cptIndex];
+
+  // update local history table and global history table entries
   if(resolveDir == TAKEN){
     ght[ghtIndex] = SatIncrement(ghtCounter, GHT_CTR_MAX);
+    lht[lhtIndex] = SatIncrement(lhtCounter, LHT_CTR_MAX);
   }else{
     ght[ghtIndex] = SatDecrement(ghtCounter);
+    lht[lhtIndex] = SatDecrement(lhtCounter);
   }
 
-  // update the GHR
+  // update choice predictor
+  if(lDecision != gDecision){ // both disagree
+    if(resolveDir == lDecision) // local is correct - give more weight to local
+      cpt[cptIndex] = SatDecrement(cptCounter);
+    else // global is correct - give more weight to global
+      cpt[cptIndex] = SatIncrement(cptCounter, CPT_CTR_MAX);
+  }else{ // both agree
+    if(lDecision == resolveDir){ // both are correct
+      if(cptCounter >= CPT_CTR_MAX/2) // make global even stronger
+	cpt[cptIndex] = SatIncrement(cptCounter, CPT_CTR_MAX);
+      else
+	cpt[cptIndex] = SatDecrement(cptCounter);
+    }
+  }
+
+  // update the GHR, LPT Entry
   ghr = (ghr << 1);
+  lpt[lptIndex] = lhtIndex << 1;
 
   if(resolveDir == TAKEN){
     ghr++; 
+    lpt[lptIndex]++;
   }
 }
 
