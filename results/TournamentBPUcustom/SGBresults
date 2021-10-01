@@ -1,0 +1,27 @@
+
+ResultDirs ==>                	amentBPUcustom	
+
+SHORT_MOBILE-24     	       1.000 	
+SHORT_MOBILE-25     	       3.000 	
+SHORT_MOBILE-27     	       2.000 	
+SHORT_SERVER-1      	     277.000 	
+SHORT_SERVER-2      	     287.000 	
+SHORT_SERVER-3      	     287.000 	
+SHORT_SERVER-117    	     301.000 	
+SHORT_SERVER-118    	     351.000 	
+SHORT_SERVER-119    	     326.000 	
+SHORT_SERVER-11     	     196.000 	
+SHORT_SERVER-120    	     292.000 	
+LONG_MOBILE-1       	     108.000 	
+LONG_MOBILE-2       	     226.000 	
+LONG_MOBILE-3       	     240.000 	
+LONG_MOBILE-11      	     205.000 	
+LONG_MOBILE-12      	     206.000 	
+LONG_MOBILE-13      	      23.000 	
+LONG_SERVER-1       	     272.000 	
+LONG_SERVER-2       	     287.000 	
+LONG_SERVER-3       	     177.000 	
+LONG_SERVER-4       	     152.000 	
+
+AMEAN               	     200.905 	
+

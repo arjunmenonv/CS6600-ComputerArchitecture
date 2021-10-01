@@ -6,41 +6,27 @@
 #  This shell file gives examples of launching simulations for all 4 categories of workloads
 
 
-#set this variable to NumCores in your cluster machine for faster sims
+# set this variable to NumCores in your cluster machine for faster sims
 num_parallel_jobs=16
+run_suite=custom
 
 ###########  HOW TO RUN JOBS?  ################
 
-# The following line will launch sims for all workloads when you run ./doit.sh (comment it if you dont want it to) 
+# The following line will launch sims for all workloads when you run ./doit.sh (comment it if you dont want it to)
 ##############################
 cd ../sim
 make clean
 make
 cd ../scripts
-time ./runall.pl -s ../sim/predictor -w custom -f  $num_parallel_jobs -d ../results/TournamentBPU_ALL
-./getdata.pl -w custom -d ../results/TournamentBPU > ../results/TournamentBPU_ALL/rollup
-
-#./runall.pl -s ../sim/predictor -w all -f  $num_parallel_jobs -d ../results/MYRESULTS
-
-
-###########  HOW TO GET STATS?  ################
-
-# This scripts creates stats, after all the earlier jobs finish
-
-#./getdata.pl -w all -d ../results/MYRESULTS
-#./getdata.pl -w all -d ../results/AWS_RESULTS_SEZNEC_EVAL
-
-# To compare MPKI numbers against GSHARE for the provided benchmarks , uncomment this line 
-# ./getdata.pl -w all -d ../results/MYRESULTS ../results/GSHARE.04KB  ../results/GSHARE.08KB ../results/GSHARE.16KB ../results/GSHARE.32KB
+time ./runall.pl -s ../sim/predictor -w $run_suite -f  $num_parallel_jobs -d ../results/TournamentBPUcustom
+./getdata.pl -w $run_suite -noxxxx -d ../results/TournamentBPUcustom > ../results/TournamentBPUcustom/rollup
+./getdata.pl -w $run_suite -s Predicted_Taken_Skew -noxxxx -d ../results/TournamentBPUcustom > ../results/TournamentBPUcustom/PTSresults
+./getdata.pl -w $run_suite -s True_Taken_Skew -noxxxx -d ../results/TournamentBPUcustom > ../results/TournamentBPUcustom/TTSresults
+./getdata.pl -w $run_suite -s Strong_Local_Bias -noxxxx -d ../results/TournamentBPUcustom > ../results/TournamentBPUcustom/SLBresults
+./getdata.pl -w $run_suite -s Weak_Local_Bias -noxxxx -d ../results/TournamentBPUcustom > ../results/TournamentBPUcustom/WLBresults
+./getdata.pl -w $run_suite -s Weak_Global_Bias -noxxxx -d ../results/TournamentBPUcustom > ../results/TournamentBPUcustom/WGBresults
+./getdata.pl -w $run_suite -s Strong_Global_Bias -noxxxx -d ../results/TournamentBPUcustom > ../results/TournamentBPUcustom/SGBresults
 
 
-
-###########  PAST RUNS FOR 4KB, 8KB, and 16KB ###########
-
-# The results are already in "../results" directory
-
-#./runall.pl -f $num_parallel_jobs -d "../results/GSHARE.04KB"
-#./runall.pl -f $num_parallel_jobs -d "../results/GSHARE.08KB"
-#./runall.pl -f $num_parallel_jobs -d "../results/GSHARE.16KB"
 
 ################## GOOD LUCK! ##################
