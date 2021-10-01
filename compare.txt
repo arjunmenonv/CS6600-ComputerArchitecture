@@ -1,0 +1,85 @@
+// PC >> 4
+
+SHORT_MOBILE-24                0.001
+SHORT_MOBILE-25                0.002
+SHORT_MOBILE-27                0.467
+SHORT_SERVER-1                15.011
+SHORT_SERVER-2                17.387
+SHORT_SERVER-3                 2.545
+LONG_MOBILE-1                  0.709
+LONG_MOBILE-2                  1.516
+LONG_MOBILE-3                  8.476
+LONG_SERVER-1                 14.598
+LONG_SERVER-2                  2.545
+LONG_SERVER-3                 19.864
+
+AMEAN                          6.927
+
+// PC >> 3
+
+SHORT_MOBILE-24                0.001
+SHORT_MOBILE-25                0.002
+SHORT_MOBILE-27                0.467
+SHORT_SERVER-1                15.030
+SHORT_SERVER-2                17.436
+SHORT_SERVER-3                 2.556
+LONG_MOBILE-1                  0.677
+LONG_MOBILE-2                  1.498
+LONG_MOBILE-3                  8.415
+LONG_SERVER-1                 14.490
+LONG_SERVER-2                  2.556
+LONG_SERVER-3                 19.667
+
+AMEAN                          6.899
+
+// PC >> 2
+
+SHORT_MOBILE-24                0.001
+SHORT_MOBILE-25                0.002
+SHORT_MOBILE-27                0.467
+SHORT_SERVER-1                15.262
+SHORT_SERVER-2                17.470
+SHORT_SERVER-3                 2.548
+LONG_MOBILE-1                  0.677
+LONG_MOBILE-2                  1.498
+LONG_MOBILE-3                  8.368
+LONG_SERVER-1                 14.747
+LONG_SERVER-2                  2.548
+LONG_SERVER-3                 19.666
+
+AMEAN                          6.938
+
+// PC >> 1
+
+SHORT_MOBILE-24                0.001
+SHORT_MOBILE-25                0.002
+SHORT_MOBILE-27                0.467
+SHORT_SERVER-1                15.856
+SHORT_SERVER-2                19.271
+SHORT_SERVER-3                 3.095
+LONG_MOBILE-1                  0.680
+LONG_MOBILE-2                  1.496
+LONG_MOBILE-3                  8.448
+LONG_SERVER-1                 15.270
+LONG_SERVER-2                  3.095
+LONG_SERVER-3                 19.671
+
+AMEAN                          7.279
+
+
+// PC
+
+SHORT_MOBILE-24                0.001
+SHORT_MOBILE-25                0.002
+SHORT_MOBILE-27                0.467
+SHORT_SERVER-1                16.343
+SHORT_SERVER-2                20.738
+SHORT_SERVER-3                 3.607
+LONG_MOBILE-1                  0.692
+LONG_MOBILE-2                  1.559
+LONG_MOBILE-3                  8.603
+LONG_SERVER-1                 15.739
+LONG_SERVER-2                  3.607
+LONG_SERVER-3                 19.722
+
+AMEAN                          7.590
