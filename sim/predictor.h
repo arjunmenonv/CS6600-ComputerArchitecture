@@ -138,7 +138,7 @@ bool    PREDICTOR::GetPrediction(UINT64 PC){
   */
 
   UINT32 lptIndex = (PC) % (numLptEntries);
-  UINT32 lhtIndex = lpt[lptIndex];
+  UINT32 lhtIndex = lpt[lptIndex] % (numLhtEntries);
   UINT32 lhtCounter = lht[lhtIndex];
   bool lDecision = (lhtCounter > LHT_CTR_MAX/2) ? TAKEN : NOT_TAKEN;
 
@@ -190,7 +190,7 @@ void    PREDICTOR::UpdatePredictor(UINT64 PC, OpType opType, bool resolveDir, bo
   UINT32 gDecision  = (ghtCounter > GHT_CTR_MAX/2) ? TAKEN : NOT_TAKEN;
 
   UINT32 lptIndex   = (PC) % (numLptEntries);
-  UINT32 lhtIndex   = lpt[lptIndex];
+  UINT32 lhtIndex   = lpt[lptIndex] % (numLhtEntries);
   UINT32 lhtCounter = lht[lhtIndex];
   UINT32 lDecision  = (lhtCounter > LHT_CTR_MAX/2) ? TAKEN : NOT_TAKEN;
 
