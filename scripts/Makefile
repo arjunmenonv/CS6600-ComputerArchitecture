@@ -1,7 +1,7 @@
 .PHONY: tempsim
 tempsim:
-	./dotemp.sh
+	./evaltemp.sh
 
 .PHONY: allsim
 allsim:
-	./doall.sh
+	./evalall.sh

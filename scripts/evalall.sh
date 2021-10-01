@@ -14,10 +14,7 @@ run_suite=custom
 
 # The following line will launch sims for all workloads when you run ./doit.sh (comment it if you dont want it to)
 ##############################
-cd ../sim
-make clean
-make
-cd ../scripts
+
 time ./runall.pl -s ../sim/predictor -w $run_suite -f  $num_parallel_jobs -d ../results/TournamentBPUcustom
 ./getdata.pl -w $run_suite -noxxxx -d ../results/TournamentBPUcustom > ../results/TournamentBPUcustom/rollup
 ./getdata.pl -w $run_suite -s Predicted_Taken_Skew -noxxxx -d ../results/TournamentBPUcustom > ../results/TournamentBPUcustom/PTSresults
