@@ -21,7 +21,7 @@
 #define LPT_CTR_MAX  3
 #define LPT_CTR_INIT 2
 #define CPT_CTR_MAX  3
-#define CPT_CTR_INIT 2
+#define CPT_CTR_INIT 1
 #define LHT_INIT     0
 #define GHR_INIT     0
 
