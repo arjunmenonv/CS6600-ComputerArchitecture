@@ -2,7 +2,7 @@
 //  Copyright 2015 Samsung Austin Semiconductor, LLC.                //
 ///////////////////////////////////////////////////////////////////////
 
-//Description : Main file for CBP2016 
+//Description : Main file for CBP2016
 
 #include <assert.h>
 #include <stdlib.h>
@@ -29,7 +29,7 @@ void CheckHeartBeat(UINT64 numIter, UINT64 numMispred)
  UINT64 d1K   =1000;
  UINT64 d10K  =10000;
  UINT64 d100K =100000;
- UINT64 d1M   =1000000; 
+ UINT64 d1M   =1000000;
  UINT64 d10M  =10000000;
  UINT64 d30M  =30000000;
  UINT64 d60M  =60000000;
@@ -45,79 +45,79 @@ void CheckHeartBeat(UINT64 numIter, UINT64 numMispred)
 //    fflush(stdout);
 //  }
   if(numIter == d1K){ //prints MPKI after 100K branches
-    printf("  MPKBr_1K         \t : %10.4f",   1000.0*(double)(numMispred)/(double)(numIter));   
+    printf("  MPKBr_1K         \t : %10.4f",   1000.0*(double)(numMispred)/(double)(numIter));
     fflush(stdout);
   }
 
   if(numIter == d10K){ //prints MPKI after 100K branches
-    printf("  MPKBr_10K         \t : %10.4f",   1000.0*(double)(numMispred)/(double)(numIter));   
+    printf("  MPKBr_10K         \t : %10.4f",   1000.0*(double)(numMispred)/(double)(numIter));
     fflush(stdout);
   }
-  
+
   if(numIter == d100K){ //prints MPKI after 100K branches
-    printf("  MPKBr_100K         \t : %10.4f",   1000.0*(double)(numMispred)/(double)(numIter));   
+    printf("  MPKBr_100K         \t : %10.4f",   1000.0*(double)(numMispred)/(double)(numIter));
     fflush(stdout);
   }
   if(numIter == d1M){
-    printf("  MPKBr_1M         \t : %10.4f",   1000.0*(double)(numMispred)/(double)(numIter)); 
+    printf("  MPKBr_1M         \t : %10.4f",   1000.0*(double)(numMispred)/(double)(numIter));
     fflush(stdout);
   }
 
   if(numIter == d10M){ //prints MPKI after 100K branches
-    printf("  MPKBr_10M         \t : %10.4f",   1000.0*(double)(numMispred)/(double)(numIter));   
+    printf("  MPKBr_10M         \t : %10.4f",   1000.0*(double)(numMispred)/(double)(numIter));
     fflush(stdout);
   }
 
   if(numIter == d30M){ //prints MPKI after 100K branches
-    printf("  MPKBr_30M         \t : %10.4f",   1000.0*(double)(numMispred)/(double)(numIter));   
+    printf("  MPKBr_30M         \t : %10.4f",   1000.0*(double)(numMispred)/(double)(numIter));
     fflush(stdout);
   }
 
   if(numIter == d60M){ //prints MPKI after 100K branches
-    printf("  MPKBr_60M         \t : %10.4f",   1000.0*(double)(numMispred)/(double)(numIter));   
+    printf("  MPKBr_60M         \t : %10.4f",   1000.0*(double)(numMispred)/(double)(numIter));
     fflush(stdout);
   }
 
   if(numIter == d100M){ //prints MPKI after 100K branches
-    printf("  MPKBr_100M         \t : %10.4f",   1000.0*(double)(numMispred)/(double)(numIter));   
+    printf("  MPKBr_100M         \t : %10.4f",   1000.0*(double)(numMispred)/(double)(numIter));
     fflush(stdout);
   }
-  
+
   if(numIter == d300M){ //prints MPKI after 100K branches
-    printf("  MPKBr_300M         \t : %10.4f",   1000.0*(double)(numMispred)/(double)(numIter));   
+    printf("  MPKBr_300M         \t : %10.4f",   1000.0*(double)(numMispred)/(double)(numIter));
     fflush(stdout);
   }
 
   if(numIter == d600M){ //prints MPKI after 100K branches
-    printf("  MPKBr_600M         \t : %10.4f",   1000.0*(double)(numMispred)/(double)(numIter));   
+    printf("  MPKBr_600M         \t : %10.4f",   1000.0*(double)(numMispred)/(double)(numIter));
     fflush(stdout);
   }
 
   if(numIter == d1B){ //prints MPKI after 100K branches
-    printf("  MPKBr_1B         \t : %10.4f",   1000.0*(double)(numMispred)/(double)(numIter));   
+    printf("  MPKBr_1B         \t : %10.4f",   1000.0*(double)(numMispred)/(double)(numIter));
     fflush(stdout);
   }
-  
+
   if(numIter == d10B){ //prints MPKI after 100K branches
-    printf("  MPKBr_10B         \t : %10.4f",   1000.0*(double)(numMispred)/(double)(numIter));   
+    printf("  MPKBr_10B         \t : %10.4f",   1000.0*(double)(numMispred)/(double)(numIter));
     fflush(stdout);
   }
- 
+
 }//void CheckHeartBeat
 
 // usage: predictor <trace>
 
 int main(int argc, char* argv[]){
-  
+
   if (argc != 2) {
     printf("usage: %s <trace>\n", argv[0]);
     exit(-1);
   }
-  
+
   ///////////////////////////////////////////////
   // Init variables
   ///////////////////////////////////////////////
-    
+
     PREDICTOR  *brpred = new PREDICTOR();  // this instantiates the predictor code
   ///////////////////////////////////////////////
   // read each trace recrod, simulate until done
@@ -135,11 +135,11 @@ int main(int argc, char* argv[]){
     key = "branch_instruction_count:";
     bt9_reader.header.getFieldValueStr(key, value);
     UINT64     branch_instruction_counter = std::stoull(value, nullptr, 0);
-    UINT64     numMispred =0;  
-//ver2    UINT64     numMispred_btbMISS =0;  
-//ver2    UINT64     numMispred_btbANSF =0;  
-//ver2    UINT64     numMispred_btbATSF =0;  
-//ver2    UINT64     numMispred_btbDYN =0;  
+    UINT64     numMispred =0;
+//ver2    UINT64     numMispred_btbMISS =0;
+//ver2    UINT64     numMispred_btbANSF =0;
+//ver2    UINT64     numMispred_btbATSF =0;
+//ver2    UINT64     numMispred_btbDYN =0;
 
     UINT64 cond_branch_instruction_counter=0;
 //ver2     UINT64 btb_ansf_cond_branch_instruction_counter=0;
@@ -151,11 +151,11 @@ int main(int argc, char* argv[]){
 //ver2    ///////////////////////////////////////////////
 //ver2    // model simple branch marking structure
 //ver2    ///////////////////////////////////////////////
-//ver2    std::map<UINT64, UINT32> myBtb; 
+//ver2    std::map<UINT64, UINT32> myBtb;
 //ver2    map<UINT64, UINT32>::iterator myBtbIterator;
 //ver2
 //ver2    myBtb.clear();
-   
+
   ///////////////////////////////////////////////
   // read each trace record, simulate until done
   ///////////////////////////////////////////////
@@ -176,7 +176,7 @@ int main(int argc, char* argv[]){
 //          bool dirNeverTkn = (it->getSrcNode()->brObservedTakenCnt() == 0) && (it->getSrcNode()->brObservedNotTakenCnt() > 0); //JD2_2_2016
 
 //JD2_2_2016 break down branch instructions into all possible types
-          opType = OPTYPE_ERROR; 
+          opType = OPTYPE_ERROR;
 
           if ((br_class.type == bt9::BrClass::Type::UNKNOWN) && (it->getSrcNode()->brNodeIndex())) { //only fault if it isn't the first node in the graph (fake branch)
             opType = OPTYPE_ERROR; //sanity check
@@ -252,7 +252,7 @@ int main(int argc, char* argv[]){
             opType = OPTYPE_ERROR;
           }
 
-  
+
           PC = it->getSrcNode()->brVirtualAddr();
 
           branchTaken = it->getEdge()->isTakenPath();
@@ -262,7 +262,7 @@ int main(int argc, char* argv[]){
 
 /************************************************************************************************************/
 
-          if (opType == OPTYPE_ERROR) { 
+          if (opType == OPTYPE_ERROR) {
             if (it->getSrcNode()->brNodeIndex()) { //only fault if it isn't the first node in the graph (fake branch)
               fprintf(stderr, "OPTYPE_ERROR\n");
               printf("OPTYPE_ERROR\n");
@@ -282,7 +282,7 @@ int main(int argc, char* argv[]){
 //ver2              //printf("BTB miss ");
 //ver2              myBtb.insert(pair<UINT64, UINT32>(PC, (UINT32)branchTaken)); //on a miss insert with outcome (N->btbANSF, T->btbATSF)
 //ver2              predDir = brpred->GetPrediction(PC, btbANSF, btbATSF, btbDYN);
-//ver2              brpred->UpdatePredictor(PC, opType, branchTaken, predDir, branchTarget, btbANSF, btbATSF, btbDYN); 
+//ver2              brpred->UpdatePredictor(PC, opType, branchTaken, predDir, branchTarget, btbANSF, btbATSF, btbDYN);
 //ver2            }
 //ver2            else {
 //ver2              btbANSF = (myBtbIterator->second == 0);
@@ -291,7 +291,7 @@ int main(int argc, char* argv[]){
 //ver2              //printf("BTB hit ANSF: %d ATSF: %d DYN: %d ", btbANSF, btbATSF, btbDYN);
 //ver2
 //ver2              predDir = brpred->GetPrediction(PC, btbANSF, btbATSF, btbDYN);
-//ver2              brpred->UpdatePredictor(PC, opType, branchTaken, predDir, branchTarget, btbANSF, btbATSF, btbDYN); 
+//ver2              brpred->UpdatePredictor(PC, opType, branchTaken, predDir, branchTarget, btbANSF, btbATSF, btbDYN);
 //ver2
 //ver2              if (  (btbANSF && branchTaken)   // only exhibited N until now and we just got a T -> upgrade to dynamic conditional
 //ver2                 || (btbATSF && !branchTaken)  // only exhibited T until now and we just got a N -> upgrade to dynamic conditional
@@ -304,7 +304,7 @@ int main(int argc, char* argv[]){
             bool predDir = false;
 
             predDir = brpred->GetPrediction(PC);
-            brpred->UpdatePredictor(PC, opType, branchTaken, predDir, branchTarget); 
+            brpred->UpdatePredictor(PC, opType, branchTaken, predDir, branchTarget);
 
             if(predDir != branchTaken){
               numMispred++; // update mispred stats
@@ -344,8 +344,17 @@ int main(int argc, char* argv[]){
           std::cout << ex.what() << '\n';
           break;
         }
-      
+
       } //for (auto it = bt9_reader.begin(); it != bt9_reader.end(); ++it)
+
+      // Update and Read Counters in Predictor object
+      brpred->TrackcptBias();
+      UINT32 PredT = brpred->PredT;
+      UINT32 PredNT = brpred->PredNT;
+      UINT32 TrueT = brpred->TrueT;
+      UINT32 TrueNT = brpred->TrueNT;
+      //UINT32 cptStateTrack[CPT_CTR_MAX + 1] = {0};
+
 
 
     ///////////////////////////////////////////
@@ -354,7 +363,7 @@ int main(int argc, char* argv[]){
 
     //NOTE: competitors are judged solely on MISPRED_PER_1K_INST. The additional stats are just for tuning your predictors.
 
-      printf("  TRACE \t : %s" , trace_path.c_str()); 
+      printf("  TRACE \t : %s" , trace_path.c_str());
       printf("  NUM_INSTRUCTIONS            \t : %10llu",   total_instruction_counter);
       printf("  NUM_BR                      \t : %10llu",   branch_instruction_counter-1); //JD2_2_2016 NOTE there is a dummy branch at the beginning of the trace...
       printf("  NUM_UNCOND_BR               \t : %10llu",   uncond_branch_instruction_counter);
@@ -373,8 +382,12 @@ int main(int argc, char* argv[]){
 //ver2      printf("  MISPRED_PER_1K_INST_BTB_ANSF\t : %10.4f",   1000.0*(double)(numMispred_btbANSF)/(double)(total_instruction_counter));
 //ver2      printf("  MISPRED_PER_1K_INST_BTB_ATSF\t : %10.4f",   1000.0*(double)(numMispred_btbATSF)/(double)(total_instruction_counter));
 //ver2      printf("  MISPRED_PER_1K_INST_BTB_DYN \t : %10.4f",   1000.0*(double)(numMispred_btbDYN)/(double)(total_instruction_counter));
+      printf("  Predicted_Taken_Skew        \t : %10.4f",   (double)(PredT)/((double)(PredT) + (double)(PredNT)));
+      printf("  True_Taken_Skew             \t : %10.4f",   (double)(TrueT)/((double)(TrueT) + (double)(TrueNT)));
+      printf("  Strong_Local_Bias           \t: %d",        brpred->cptStateTrack[0]);
+      printf("  Weak_Local_Bias             \t: %d",        brpred->cptStateTrack[1]);
+      printf("  Weak_Global_Bias            \t: %d",        brpred->cptStateTrack[2]);
+      printf("  Strong_Global_Bias          \t: %d",        brpred->cptStateTrack[3]);
+
       printf("\n");
 }
-
-
-

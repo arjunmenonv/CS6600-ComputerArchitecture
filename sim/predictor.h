@@ -68,6 +68,13 @@ class PREDICTOR{
   bool    GetPrediction(UINT64 PC);
   void    UpdatePredictor(UINT64 PC, OpType opType, bool resolveDir, bool predDir, UINT64 branchTarget);
   void    TrackOtherInst(UINT64 PC, OpType opType, bool branchDir, UINT64 branchTarget);
+  void    TrackcptBias();
+  // counters to track BP's behaviour
+  UINT32 PredT;
+  UINT32 PredNT;
+  UINT32 TrueT;
+  UINT32 TrueNT;
+  UINT32 cptStateTrack[CPT_CTR_MAX + 1];
 
   // Contestants can define their own functions below
 };
@@ -117,6 +124,14 @@ PREDICTOR::PREDICTOR(void){
   cpt                	 = new UINT32[numCptEntries];
   for(UINT32 ii=0; ii< numCptEntries; ii++)
     cpt[ii]=CPT_CTR_INIT;
+
+  // init counters
+  PredT = 0;
+  PredNT = 0;
+  TrueT = 0;
+  TrueNT = 0;
+  for(UINT32 ii = 0; ii<= CPT_CTR_MAX; ii++)
+    cptStateTrack[ii] = 0;
 }
 
 PREDICTOR::~PREDICTOR(){
@@ -151,9 +166,13 @@ bool    PREDICTOR::GetPrediction(UINT64 PC){
   bool cBias = (cptCounter > CPT_CTR_MAX/2) ? 1 : 0;
 
   if (cBias){
+    if(gDecision == TAKEN)  PredT++;
+    else PredNT++;
     return gDecision;
   }
   else {
+    if(lDecision == TAKEN)  PredT++;
+    else PredNT++;
     return lDecision;
   }
 
@@ -201,9 +220,11 @@ void    PREDICTOR::UpdatePredictor(UINT64 PC, OpType opType, bool resolveDir, bo
   if(resolveDir == TAKEN){
     ght[ghtIndex] = SatIncrement(ghtCounter, GHT_CTR_MAX);
     lht[lhtIndex] = SatIncrement(lhtCounter, LHT_CTR_MAX);
+    TrueT++;
   }else{
     ght[ghtIndex] = SatDecrement(ghtCounter);
     lht[lhtIndex] = SatDecrement(lhtCounter);
+    TrueNT++;
   }
 
   // update choice predictor
@@ -228,6 +249,19 @@ void    PREDICTOR::UpdatePredictor(UINT64 PC, OpType opType, bool resolveDir, bo
   if(resolveDir == TAKEN){
     ghr++;
     lpt[lptIndex]++;
+  }
+}
+
+/////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+
+void PREDICTOR::TrackcptBias(){
+  for(UINT32 ii=0; ii< numCptEntries; ii++){
+    UINT32 cptEntry = cpt[ii];
+    if(cptEntry <= CPT_CTR_MAX)
+      cptStateTrack[cptEntry]++;
+    else
+      printf("Erroneous state in CPT\n");
   }
 }
 
