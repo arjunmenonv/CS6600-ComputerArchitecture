@@ -1,0 +1,27 @@
+
+ResultDirs ==>                	urnamentBPU_LB	
+
+SHORT_MOBILE-24     	       0.001 	
+SHORT_MOBILE-25     	       0.002 	
+SHORT_MOBILE-27     	       0.036 	
+SHORT_SERVER-1      	       7.377 	
+SHORT_SERVER-2      	       6.076 	
+SHORT_SERVER-3      	       1.505 	
+SHORT_SERVER-117    	      21.095 	
+SHORT_SERVER-118    	      19.173 	
+SHORT_SERVER-119    	      16.927 	
+SHORT_SERVER-11     	       1.656 	
+SHORT_SERVER-120    	      21.459 	
+LONG_MOBILE-1       	       0.274 	
+LONG_MOBILE-2       	       1.249 	
+LONG_MOBILE-3       	       7.913 	
+LONG_MOBILE-11      	       3.257 	
+LONG_MOBILE-12      	       3.454 	
+LONG_MOBILE-13      	       0.015 	
+LONG_SERVER-1       	       7.227 	
+LONG_SERVER-2       	       1.505 	
+LONG_SERVER-3       	      18.079 	
+LONG_SERVER-4       	       2.589 	
+
+AMEAN               	       6.708 	
+
