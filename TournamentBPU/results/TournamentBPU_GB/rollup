@@ -1,0 +1,27 @@
+
+ResultDirs ==>                	urnamentBPU_GB	
+
+SHORT_MOBILE-24     	       0.001 	
+SHORT_MOBILE-25     	       0.002 	
+SHORT_MOBILE-27     	       0.471 	
+SHORT_SERVER-1      	       7.380 	
+SHORT_SERVER-2      	       6.111 	
+SHORT_SERVER-3      	       1.511 	
+SHORT_SERVER-117    	      21.113 	
+SHORT_SERVER-118    	      19.156 	
+SHORT_SERVER-119    	      16.932 	
+SHORT_SERVER-11     	       1.676 	
+SHORT_SERVER-120    	      21.462 	
+LONG_MOBILE-1       	       0.296 	
+LONG_MOBILE-2       	       1.247 	
+LONG_MOBILE-3       	       7.920 	
+LONG_MOBILE-11      	       3.265 	
+LONG_MOBILE-12      	       3.459 	
+LONG_MOBILE-13      	       0.106 	
+LONG_SERVER-1       	       7.224 	
+LONG_SERVER-2       	       1.511 	
+LONG_SERVER-3       	      18.083 	
+LONG_SERVER-4       	       2.609 	
+
+AMEAN               	       6.740 	
+
