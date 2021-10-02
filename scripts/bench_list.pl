@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 #*************************************************************
 # (C) COPYRIGHT 2016 Samsung Electronics
-# 
+#
 #*************************************************************
 # Benchmark Sets
 # ************************************************************
@@ -26,26 +26,35 @@ SHORT_MOBILE-24
 SHORT_MOBILE-28
 SHORT_MOBILE-3';
 
-$SUITES{'temp'}      = 
+$SUITES{'temp'}      =
 'SHORT_MOBILE-24
 SHORT_MOBILE-25
 SHORT_MOBILE-27';
 
-$SUITES{'custom'}      = 
+$SUITES{'custom'}      =
 'SHORT_MOBILE-24
 SHORT_MOBILE-25
 SHORT_MOBILE-27
 SHORT_SERVER-1
 SHORT_SERVER-2
 SHORT_SERVER-3
+SHORT_SERVER-117
+SHORT_SERVER-118
+SHORT_SERVER-119
+SHORT_SERVER-11
+SHORT_SERVER-120
 LONG_MOBILE-1
 LONG_MOBILE-2
 LONG_MOBILE-3
+LONG_MOBILE-11
+LONG_MOBILE-12
+LONG_MOBILE-13
 LONG_SERVER-1
 LONG_SERVER-2
-LONG_SERVER-3';
+LONG_SERVER-3
+LONG_SERVER-4';
 
-$SUITES{'SHORT_SERVER'}      = 
+$SUITES{'SHORT_SERVER'}      =
 'SHORT_SERVER-100
 SHORT_SERVER-101
 SHORT_SERVER-102
@@ -340,7 +349,7 @@ SHORT_SERVER-98
 SHORT_SERVER-99
 SHORT_SERVER-9';
 
-$SUITES{'SHORT_MOBILE'}      = 
+$SUITES{'SHORT_MOBILE'}      =
 'SHORT_MOBILE-100
 SHORT_MOBILE-101
 SHORT_MOBILE-102
@@ -450,7 +459,7 @@ SHORT_MOBILE-99
 SHORT_MOBILE-9';
 
 
-$SUITES{'LONG_MOBILE'}      = 
+$SUITES{'LONG_MOBILE'}      =
 'LONG_MOBILE-10
 LONG_MOBILE-11
 LONG_MOBILE-12
@@ -484,37 +493,32 @@ LONG_MOBILE-7
 LONG_MOBILE-8
 LONG_MOBILE-9';
 
-$SUITES{'LONG_SERVER'}      = 
-'LONG_SERVER-1 
-LONG_SERVER-2 
-LONG_SERVER-3 
-LONG_SERVER-4 
-LONG_SERVER-5 
-LONG_SERVER-6 
-LONG_SERVER-7 
+$SUITES{'LONG_SERVER'}      =
+'LONG_SERVER-1
+LONG_SERVER-2
+LONG_SERVER-3
+LONG_SERVER-4
+LONG_SERVER-5
+LONG_SERVER-6
+LONG_SERVER-7
 LONG_SERVER-8';
 
 
 
 
 
-$SUITES{'short'}      = 
+$SUITES{'short'}      =
             "$SUITES{'SHORT_SERVER'}"."\n".
               "$SUITES{'SHORT_MOBILE'}";
 
 
-$SUITES{'long'}      = 
+$SUITES{'long'}      =
 	      "$SUITES{'LONG_SERVER'}"."\n".
           "$SUITES{'LONG_MOBILE'}";
 
 
-$SUITES{'all'}      = 
+$SUITES{'all'}      =
 	      "$SUITES{'LONG_SERVER'}"."\n".
           "$SUITES{'LONG_MOBILE'}"."\n".
             "$SUITES{'SHORT_SERVER'}"."\n".
               "$SUITES{'SHORT_MOBILE'}";
-
-
-
-
-
