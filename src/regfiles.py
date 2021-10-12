@@ -1,4 +1,9 @@
 class arfEntry:
+    '''
+    +------+------+-----+
+    | Data | Busy | Tag |
+    +------+------+-----+
+    '''
     def __init__(self):
         self.data = 0
         self.busy = False
@@ -7,11 +12,33 @@ class arfEntry:
         print("Data: {}\tBusy: {}\tTag: {}".format(self.data, self.busy, self.tag))
 
 class arf:
+    '''
+   +---+------+------+-----+
+   |   | Data | Busy | Tag |
+   +---+------+------+-----+
+   | 0 |      |      |     |
+   +---+------+------+-----+
+   | 1 |      |      |     |
+   +---+------+------+-----+
+   | 2 |      |      |     |
+   +---+------+------+-----+
+   ....
+   ....
+   ....
+   +---+------+------+-----+
+   | N |      |      |     |
+   +---+------+------+-----+
+    '''
     def __init__(self, numEntries):
         self.entries = [arfEntry()]*numEntries
         print("Instantiated ARF")
 
 class rrfEntry:
+    '''
+    +------+------+-------+
+    | Data | Busy | Valid |
+    +------+------+-------+
+    '''
     def __init__(self):
         self.data = 0
         self.busy = False
@@ -20,11 +47,48 @@ class rrfEntry:
         print("Data: {}\tBusy: {}\tValid: {}".format(self.data, self.busy, self.valid))
 
 class rrf:
+    '''
+   +---+------+------+-------+
+   |   | Data | Busy | Valid |
+   +---+------+------+-------+
+   | 0 |      |      |       |
+   +---+------+------+-------+
+   | 1 |      |      |       |
+   +---+------+------+-------+
+   | 2 |      |      |       |
+   +---+------+------+-------+
+   ....
+   ....
+   ....
+   +---+------+------+-------+
+   | N |      |      |       |
+   +---+------+------+-------+
+    '''
     def __init__(self, numEntries):
         self.entries = [rrfEntry()]*numEntries
         print("Instantiated RRF")
 
 class regfiles:
+    '''
+    +==========================+
+    |  +-------+    +-------+  |
+    |  |       |    |       |  |
+    |  |  ARF  |    |  RRF  |  |
+    |  |       |    |       |  |
+    |  +-------+    +-------+  |
+    |      |            |      |
+    |   +------------------+   |
+    |   |                  |   |
+    |   |       Logic      |   |
+    |   |                  |   |
+    |   +------------------+   |
+    |             |            |
+    | +----------------------+ |
+    | | Data / Tag forwarded | |
+    | +----------------------+ |
+    +==========================+
+
+    '''
     def __init__(self, numEntriesRRF, numEntriesARF):
         self.rrf = rrf(numEntriesRRF)
         self.arf = arf(numEntriesARF)
@@ -32,7 +96,7 @@ class regfiles:
 
     def destinationAllocate(self, arfReg):
         for index, entry in enumerate(self.rrf.entries):
-            if entry.busy == False:
+            if entry.busy == False: # RRF entry is free. Allocate this
                 entry.busy = True
                 entry.valid = False
                 self.arf.entries[arfReg].busy = True
@@ -40,10 +104,10 @@ class regfiles:
                 break
 
     def registerUpdate(self, rrfIndex, type, data):
-        if type=='finish':
+        if type=='finish': # Update data from FU in RRF
             self.rrf.entries[rrfIndex].data = data
             self.rrf.entries[rrfIndex].valid = True
-        elif type=='complete':
+        elif type=='complete': # Update from RRF to ARF and deallocate RRF and ARF
             for entry in self.arf.entries:
                 if entry.tag == rrfIndex:
                     entry.data = self.rrf.entries[rrfIndex].data
@@ -52,12 +116,11 @@ class regfiles:
                     break
 
     def sourceRead(self, arfIndex):
-        if self.arf.entries[arfIndex].busy == False:
+        if self.arf.entries[arfIndex].busy == False: # return data from ARF
             return self.arf.entries[arfIndex].data
         else:
             rrfIndex = self.arf.entries[arfIndex].tag
-            if self.rrf.entries[rrfIndex].valid == True:
+            if self.rrf.entries[rrfIndex].valid == True: # return data from RRF
                 return self.rrf.entries[rrfIndex].data
-            else: # forward tag to reservation station. How2???
-                print("Feature in development. Please wait")
-        return -1
+            else: # forward tag to reservation station
+                return rrfIndex
