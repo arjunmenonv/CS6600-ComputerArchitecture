@@ -65,7 +65,7 @@ class roBuffer:
         return self.tail        # save this as InstrIdx in RS
 
     def complete(self):
-        updateState()
+        self.updateState()
         if self.empty:
             print("No instruction left to complete")
             return -1
@@ -79,12 +79,13 @@ class roBuffer:
                 return -2           # head instr isnt finished
 
     def updateEntry(self, type, index):
-        updateState()
+        self.updateState()
         if state.empty:
             print("Reorder Buffer is empty")
-            break
+            return
         else:
             if (type == "issued"):
                 self.entries[index].issued = 1
             elif (type == "finished"):
                 self.entries[index].finished = 1
+            return
