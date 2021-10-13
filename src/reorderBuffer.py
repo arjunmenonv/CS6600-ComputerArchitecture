@@ -66,7 +66,7 @@ class roBuffer:
 
     def complete(self):
         updateState()
-        if state.empty:
+        if self.empty:
             print("No instruction left to complete")
             return -1
         else:
