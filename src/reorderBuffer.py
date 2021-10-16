@@ -28,9 +28,9 @@ class roBuffer:
     +-------+------+--------+----------+-----------+
     | 3     |      |        |          |           |
     +-------+------+--------+----------+-----------+
-    .
-    .
-    .
+    ...
+    ...
+    ...
     +-------+------+--------+----------+-----------+
     | N-1   |      |        |          |           |
     +-------+------+--------+----------+-----------+
@@ -80,7 +80,7 @@ class roBuffer:
 
     def updateEntry(self, type, index):
         self.updateState()
-        if state.empty:
+        if self.empty:
             print("Reorder Buffer is empty")
             return
         else:

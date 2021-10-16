@@ -8,6 +8,7 @@ class arfEntry:
         self.data = 0
         self.busy = False
         self.tag = 0
+
     def print(self):
         print("Data: {}\tBusy: {}\tTag: {}".format(self.data, self.busy, self.tag))
 
@@ -31,7 +32,6 @@ class arf:
     '''
     def __init__(self, numEntries):
         self.entries = [arfEntry()]*numEntries
-        print("Instantiated ARF")
 
 class rrfEntry:
     '''
@@ -43,6 +43,7 @@ class rrfEntry:
         self.data = 0
         self.busy = False
         self.valid = False
+
     def print(self):
         print("Data: {}\tBusy: {}\tValid: {}".format(self.data, self.busy, self.valid))
 
@@ -66,10 +67,17 @@ class rrf:
     '''
     def __init__(self, numEntries):
         self.entries = [rrfEntry()]*numEntries
-        print("Instantiated RRF")
 
 class regfiles:
     '''
+    Parameters:
+
+    numEntriesRRF (int): Number of entries in rename regfile
+    numEntriesARF (int): Number of entries in arch. regfile
+
+
+    Block Diagram:
+
     +==========================+
     |  +-------+    +-------+  |
     |  |       |    |       |  |
@@ -92,7 +100,6 @@ class regfiles:
     def __init__(self, numEntriesRRF, numEntriesARF):
         self.rrf = rrf(numEntriesRRF)
         self.arf = arf(numEntriesARF)
-        print("Regfiles instantiated")
 
     def destinationAllocate(self, arfReg):
         for index, entry in enumerate(self.rrf.entries):
@@ -124,3 +131,15 @@ class regfiles:
                 return self.rrf.entries[rrfIndex].data
             else: # forward tag to reservation station
                 return rrfIndex
+
+# simple test to see if working properly
+if __name__=="__main__":
+    rf = regfiles(numEntriesARF=32, numEntriesRRF=8)
+    print("Architecture RegFile")
+    for i, entry in enumerate(rf.arf.entries):
+        print("{}".format(i), end='\t')
+        entry.print()
+    print("Rename RegFile")
+    for i, entry in enumerate(rf.rrf.entries):
+        print("{}".format(i), end='\t')
+        entry.print()
