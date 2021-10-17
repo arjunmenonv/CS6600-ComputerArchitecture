@@ -82,7 +82,7 @@ class reservationStation:
                 index = i
                 break
         if index != None:
-            self.entries[index:] = self.entries[index+1:]
+            self.entries[index:-1] = self.entries[index+1:]
             self.entries[-1] = reservationStationEntry()
 
         return [nextInstrId, nextInstrOpcode, nextInstrOp1, nextInstrOp2]
@@ -132,17 +132,12 @@ class LSreservationStation:
         if(LSUobject.dict['busy']):
             return
         else:
-            for i, entry in enumerate(self.entries):
-                if entry.ready == True:
-                    nextInstrId = entry.id
-                    nextInstrOpcode = entry.opcode
-                    nextInstrOp1 = entry.op1
-                    nextInstrOp2 = entry.op2
-                    nextInstrOffset = entry.offset
-                    index = i
-                    break
-            if index != None:
-                self.entries[index:] = self.entries[index+1:]
+            if self.entries[0].ready == True:           # Enforce in-order Execution
+                nextInstrId = self.entries[0].id
+                nextInstrOpcode = self.entries[0].opcode
+                nextInstrOp1 = self.entries[0].op1
+                nextInstrOp2 = self.entries[0].op2
+                nextInstrOffset = self.entries[0].offset
+                self.entries[:-1] = self.entries[1:]
                 self.entries[-1] = LSrsEntry()
-
             return [nextInstrId, nextInstrOpcode, nextInstrOp1, nextInstrOp2, nextInstrOffset]
