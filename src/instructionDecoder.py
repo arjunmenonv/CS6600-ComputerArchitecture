@@ -1,12 +1,12 @@
 import sys
 from collections import namedtuple
 
-typeOfRS = {'0001':'ALU', '0010':'ALU', '0011':'MDU', '0100':'MDU', '0101':'LSU', '0110':'LSU'}
+typeOfRS = {'0001':'ASU', '0010':'ASU', '0011':'MU', '0100':'DU', '0101':'LSU', '0110':'LSU'}
 typeOfInstr = {'0001':'ADD', '0010':'SUB', '0011':'MUL', '0100':'DIV', '0101':'LOD', '0110':'STO'}
 
 instruction = namedtuple('instruction', ['inst', 'fu', 'r1', 'r2', 'r3'])
 
-def decode(instr):
+def decode(instr:str):
     '''
         Decode 16-bit instructions to a format more
         human readable and easier to deal with
