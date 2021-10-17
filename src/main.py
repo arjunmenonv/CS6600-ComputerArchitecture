@@ -11,7 +11,7 @@ def main():
 
     PC = 0
     for i in range(PC, PC+ISSUE_WIDTH, 1):
-        dispatch(instructionsDecoded[i], asu, mdu, lsu)
+        dispatch(instructionsDecoded[i], asu, mu, du, lsu)
     return
 
 if __name__=="__main__":
