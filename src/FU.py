@@ -135,7 +135,7 @@ class LSU:
                 busy = 1
                 self.end = start + self.latency
                 if opCode == 'LOD':
-                    addr = (op1 + op2)%len(mem)
+                    addr = (op2 + offset)%len(mem)
                     regval = mem[addr]
                 elif opCode == 'STO':
                     regval = None
@@ -153,4 +153,4 @@ class LSU:
             if(clkVal == self.end):
                 self.dict['busy'] = 0
                 return self.dict
-        return None
+        return {'InstrIdx': -1, 'RegVal': None, 'opCode': -1, 'busy': 0}

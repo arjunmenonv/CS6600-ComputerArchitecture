@@ -56,6 +56,8 @@ class reservationStation:
                 break
 
     def updateEntries(self, val, regNum):
+        if ((val == None) or (regNum == None)):
+            return
         for entry in self.entries:
             if entry.ready == False:
                 if (entry.valid1 == False) & (entry.op1 == regNum):
@@ -66,6 +68,7 @@ class reservationStation:
                     entry.valid2 = True
                 if (entry.valid1 == True) & (entry.valid2 == True):
                     entry.ready = True
+        return
 
     def putIntoFU(self):
         nextInstrId = -1
@@ -111,6 +114,8 @@ class LSreservationStation:
                 break
 
     def updateEntries(self, val, regNum):
+        if ((val == None) or (regNum == None)):
+            return
         for entry in self.entries:
             if entry.ready == False:
                 if (entry.valid1 == False) & (entry.op1 == regNum):
@@ -121,6 +126,7 @@ class LSreservationStation:
                     entry.valid2 = True
                 if (entry.valid1 == True) & (entry.valid2 == True):
                     entry.ready = True
+        return
 
     def putIntoFU(self, LSUobject):
         nextInstrId = -1
@@ -128,7 +134,6 @@ class LSreservationStation:
         nextInstrOp1 = None
         nextInstrOp2 = None
         nextInstrOffset = None
-        index = None
         if(LSUobject.dict['busy']):
             return
         else:
