@@ -79,8 +79,8 @@ def topModule():
     return commitRRFtag
 
 if __name__=="__main__":
-    global mem
-    mem = [None]*MEM_SIZE
+    #global mem
+    #mem = [None]*MEM_SIZE
     RF = regfiles(NUM_RRF, NUM_ARF)
     #dispBuffer = []
     asuRS = reservationStation(NUM_RSE_ASU)
