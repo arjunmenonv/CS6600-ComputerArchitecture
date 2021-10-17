@@ -13,3 +13,7 @@ NUM_RSE_MDU     = 2
 NUM_RSE_LSU     = 2
 NUM_RRF         = 16
 NUM_ARF         = 16
+
+MEM_SIZE        = 128
+
+INS_FILE        = 'test/input.txt'

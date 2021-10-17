@@ -124,13 +124,13 @@ class regfiles:
 
     def sourceRead(self, arfIndex):
         if self.arf.entries[arfIndex].busy == False: # return data from ARF
-            return self.arf.entries[arfIndex].data
+            return self.arf.entries[arfIndex].data, 1
         else:
             rrfIndex = self.arf.entries[arfIndex].tag
             if self.rrf.entries[rrfIndex].valid == True: # return data from RRF
-                return self.rrf.entries[rrfIndex].data
+                return self.rrf.entries[rrfIndex].data, 1
             else: # forward tag to reservation station
-                return rrfIndex
+                return rrfIndex, 0
 
 # simple test to see if working properly
 if __name__=="__main__":

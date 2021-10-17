@@ -37,13 +37,12 @@ class ASU:
             else:
                 index = -1
                 regval = None
-                opCode = -1
         self.stages[0] = fuEntry(index, regval, opCode)
         return out
 
-class MDU:
+class MU:
     '''
-        Mult/Div Functional Unit
+        Mult Functional Unit
         Execution is pipelined with 1 instr fed in each cycle
         latency of FU is as mentioned in config.py
     '''
@@ -70,12 +69,44 @@ class MDU:
         else:
             if opCode == 'MUL':
                 regval = op1*op2
-            elif opCode == 'DIV':
+            else:
+                index = -1
+                regval = None
+        self.stages[0] = fuEntry(index, regval, opCode)
+        return out
+
+class DU:
+    '''
+        Div Functional Unit
+        Execution is pipelined with 1 instr fed in each cycle
+        latency of FU is as mentioned in config.py
+    '''
+    def __init__(self, latency):
+        self.latency = latency
+        '''
+            InstrIdx => Reorder Buffer index, RegVal => value to be written to RenameReg & forwarded
+            opCode: 1 => add, 0 => sub
+        '''
+        self.stages = []
+        for _ in range(self.latency):
+            temp = fuEntry(-1, None, -1)
+            self.stages.extend([temp])
+
+    def shiftAndEval(self, index= -1, opCode= -1, op1=None, op2=None):
+        '''
+            Note: If the RS is full, issue a NOP (so that the output value is got)
+                  by passing the default values to shiftAndEval()
+        '''
+        out = self.stages[-1]
+        self.stages[1:] = self.stages[0:-1]     # shift (pipelined exec)
+        if (opCode == -1):      # NOP bubble
+            regval = None
+        else:
+            if opCode == 'DIV':
                 regval = op1/op2
             else:
                 index = -1
                 regval = None
-                opCode = -1
         self.stages[0] = fuEntry(index, regval, opCode)
         return out
 
