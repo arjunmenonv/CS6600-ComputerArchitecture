@@ -35,7 +35,7 @@ class roBuffer:
     | N-1   |      |        |          |           |
     +-------+------+--------+----------+-----------+
     '''
-    def __init__(self, numEntries):
+    def __init__(self, numEntries:int):
         self.entries = [roBufferEntry()]*numEntries
         self.head = 0
         self.tail = 0
@@ -78,7 +78,7 @@ class roBuffer:
             else:
                 return -2           # head instr isnt finished
 
-    def updateEntry(self, type, index):
+    def updateEntry(self, type:str, index:int):
         self.updateState()
         if self.empty:
             print("Reorder Buffer is empty")
