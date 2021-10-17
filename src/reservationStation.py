@@ -1,5 +1,3 @@
-from FU import fuEntry
-
 class reservationStationEntry:
     '''
     +----+-----+-------+-----+-------+-------+--------+
@@ -34,16 +32,16 @@ class LSrsEntry:
 
 
 class reservationStation:
-    def __init__(self, numEntries):
+    def __init__(self, numEntries:int):
         self.entries = [reservationStationEntry()]*numEntries
 
     def isFull(self):
-        for i, entry in enumerate(self.entries):
+        for entry in self.entries:
             if entry.id == None:
-                return False, i
-        return True, None
+                return False
+        return True
 
-    def addEntry(self, id, opcode, ready, op1, valid1, op2, valid2):
+    def addEntry(self, id:int, opcode:str, ready:bool, op1:int, valid1:bool, op2:int, valid2:bool):
         for entry in self.entries:
             if entry.id == None:
                 entry.id = id
@@ -55,7 +53,7 @@ class reservationStation:
                 entry.valid2 = valid2
                 break
 
-    def updateEntries(self, val, regNum):
+    def updateEntries(self, val:int, regNum:int):
         for entry in self.entries:
             if entry.ready == False:
                 if (entry.valid1 == False) & (entry.op1 == regNum):
@@ -92,12 +90,12 @@ class LSreservationStation:
         self.entries = [LSrsEntry()]*numEntries
 
     def isFull(self):
-        for i, entry in enumerate(self.entries):
+        for entry in self.entries:
             if entry.id == None:
-                return False, i
-        return True, None
+                return False
+        return True
 
-    def addEntry(self, id, opcode, ready, op1, valid1, op2, valid2, offset):
+    def addEntry(self, id:int, opcode:str, ready:bool, op1, valid1:bool, op2:int, valid2:bool, offset:int):
         for entry in self.entries:
             if entry.id == None:
                 entry.id = id
@@ -110,7 +108,7 @@ class LSreservationStation:
                 entry.offset = offset
                 break
 
-    def updateEntries(self, val, regNum):
+    def updateEntries(self, val:int, regNum:int):
         for entry in self.entries:
             if entry.ready == False:
                 if (entry.valid1 == False) & (entry.op1 == regNum):
@@ -128,7 +126,6 @@ class LSreservationStation:
         nextInstrOp1 = None
         nextInstrOp2 = None
         nextInstrOffset = None
-        index = None
         if(LSUobject.dict['busy']):
             return
         else:
