@@ -1,8 +1,10 @@
 from conf import *
-import instructionDecoder
+from instructionDecoder import *
 from reorderBuffer import *
 from regfiles import *
 from reservationStation import *
+from FU import *
+from dispatchBuffer import *
 
 def topModule():
     '''
@@ -77,13 +79,14 @@ def topModule():
     return commitRRFtag
 
 if __name__=="__main__":
-    global mem = [None]*MEM_SIZE
+    global mem
+    mem = [None]*MEM_SIZE
     RF = regfiles(NUM_RRF, NUM_ARF)
     #dispBuffer = []
     asuRS = reservationStation(NUM_RSE_ASU)
     muRS = reservationStation(NUM_RSE_MU)
     duRS = reservationStation(NUM_RSE_DU)
-    lsuRS = LSreservationStation(LATENCY_ASUNUM_RSE_LSU)
+    lsuRS = LSreservationStation(NUM_RSE_LSU)
     #
     asuFU = ASU(LATENCY_ASU)
     muFU = MU(LATENCY_MU)
@@ -105,12 +108,3 @@ if __name__=="__main__":
             break
 
     print("Number of Cycles elapsed: ", clkCount)
-
-
-'''
-instructionsDecoded = [instructionDecoder.decode(i) for i in instructionsRaw]
-
-PC = 0
-for i in range(PC, PC+ISSUE_WIDTH, 1):
-    dispatch(instructionsDecoded[i], asu, mu, du, lsu)
-'''
