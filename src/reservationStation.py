@@ -61,7 +61,7 @@ class reservationStation:
                 if (entry.valid1 == False) & (entry.op1 == regNum):
                     entry.op1 = val
                     entry.valid1 = True
-                elif (entry.valid2 == False) & (entry.op2 == regNum):
+                if (entry.valid2 == False) & (entry.op2 == regNum):
                     entry.op2 = val
                     entry.valid2 = True
                 if (entry.valid1 == True) & (entry.valid2 == True):
@@ -116,7 +116,7 @@ class LSreservationStation:
                 if (entry.valid1 == False) & (entry.op1 == regNum):
                     entry.op1 = val
                     entry.valid1 = True
-                elif (entry.valid2 == False) & (entry.op2 == regNum):
+                if (entry.valid2 == False) & (entry.op2 == regNum):
                     entry.op2 = val
                     entry.valid2 = True
                 if (entry.valid1 == True) & (entry.valid2 == True):
