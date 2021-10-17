@@ -55,7 +55,7 @@ class reservationStation:
                 entry.valid2 = valid2
                 break
 
-    def updateEntries(self, val, regNum):
+    def updateEntries(self, val:int, regNum:int):
         if ((val == None) or (regNum == None)):
             return
         for entry in self.entries:
@@ -113,7 +113,7 @@ class LSreservationStation:
                 entry.offset = offset
                 break
 
-    def updateEntries(self, val, regNum):
+    def updateEntries(self, val:int, regNum:int):
         if ((val == None) or (regNum == None)):
             return
         for entry in self.entries:
