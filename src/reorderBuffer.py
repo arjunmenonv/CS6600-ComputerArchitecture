@@ -87,7 +87,9 @@ class roBuffer:
             return
         else:
             if (type == "issued"):
+                print("In updateEntry() (issued) index= ", index)
                 self.entries[index].issued = 1
             elif (type == "finished"):
+                print("In updateEntry() (finished) index= ", index)
                 self.entries[index].finished = 1
             return
