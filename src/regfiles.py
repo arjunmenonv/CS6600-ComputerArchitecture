@@ -5,7 +5,7 @@ class arfEntry:
     +------+------+-----+
     '''
     def __init__(self):
-        self.data = 0
+        self.data = 1
         self.busy = False
         self.tag = 0
 
@@ -31,7 +31,9 @@ class arf:
    +---+------+------+-----+
     '''
     def __init__(self, numEntries):
-        self.entries = [arfEntry()]*numEntries
+        self.entries = []
+        for _ in range(numEntries):
+            self.entries.extend([arfEntry()])
 
 class rrfEntry:
     '''
@@ -40,7 +42,7 @@ class rrfEntry:
     +------+------+-------+
     '''
     def __init__(self):
-        self.data = 0
+        self.data = 1
         self.busy = False
         self.valid = False
 
@@ -66,7 +68,10 @@ class rrf:
    +---+------+------+-------+
     '''
     def __init__(self, numEntries):
-        self.entries = [rrfEntry()]*numEntries
+        self.entries = []
+        for _ in range(numEntries):
+            self.entries.extend([rrfEntry()])
+
 
 class regfiles:
     '''
@@ -102,14 +107,20 @@ class regfiles:
         self.arf = arf(numEntriesARF)
 
     def destinationAllocate(self, arfReg:int):
+        status = False
+        print("arfReg={} ".format(arfReg), end='')
+        self.arf.entries[arfReg].print()
         for index, entry in enumerate(self.rrf.entries):
             if entry.busy == False: # RRF entry is free. Allocate this
                 entry.busy = True
                 entry.valid = False
                 self.arf.entries[arfReg].busy = True
                 self.arf.entries[arfReg].tag = index
-                return True
-        return False
+                status = True
+                break
+        print("arfReg={} ".format(arfReg), end='')
+        self.arf.entries[arfReg].print()
+        return status
 
     def registerUpdate(self, rrfIndex:int, type:str, data:int = None):
         if rrfIndex != None:
@@ -125,11 +136,15 @@ class regfiles:
                         break
 
     def sourceRead(self, arfIndex:int):
+        print("arfReg={} ".format(arfIndex), end='')
+        self.arf.entries[arfIndex].print()
         if self.arf.entries[arfIndex].busy == False: # return data from ARF
+            print("Source Read from ARF")
             return self.arf.entries[arfIndex].data, True
         else:
             rrfIndex = self.arf.entries[arfIndex].tag
             if self.rrf.entries[rrfIndex].valid == True: # return data from RRF
+                print("Source Read from RRF")
                 return self.rrf.entries[rrfIndex].data, True
             else: # forward tag to reservation station
                 return rrfIndex, False

@@ -36,7 +36,9 @@ class roBuffer:
     +-------+------+--------+----------+-----------+
     '''
     def __init__(self, numEntries:int):
-        self.entries = [roBufferEntry()]*numEntries
+        self.entries = []
+        for _ in range(numEntries):
+            self.entries.extend([roBufferEntry()])
         self.head = 0
         self.tail = 0
         self.full = 0

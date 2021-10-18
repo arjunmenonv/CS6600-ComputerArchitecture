@@ -1,12 +1,12 @@
 # List all config values here
-LATENCY_ASU     = 1
+LATENCY_ASU     = 2
 LATENCY_MU      = 3
-LATENCY_DU      = 7
-LATENCY_LSU     = 2
-LATENCY_CCH     = 10
+LATENCY_DU      = 5
+LATENCY_LSU     = 1
+LATENCY_CCH     = 6
 
-DECODE_MAX    = 8
-ISSUE_WIDTH     = 16
+DECODE_MAX      = 16
+ISSUE_WIDTH     = 2
 
 NUM_ROB         = 128
 NUM_RSE_ASU     = 4
