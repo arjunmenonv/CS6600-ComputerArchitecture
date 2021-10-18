@@ -108,8 +108,6 @@ class regfiles:
 
     def destinationAllocate(self, arfReg:int):
         status = False
-        print("arfReg={} ".format(arfReg), end='')
-        self.arf.entries[arfReg].print()
         for index, entry in enumerate(self.rrf.entries):
             if entry.busy == False: # RRF entry is free. Allocate this
                 entry.busy = True
@@ -118,8 +116,6 @@ class regfiles:
                 self.arf.entries[arfReg].tag = index
                 status = True
                 break
-        print("arfReg={} ".format(arfReg), end='')
-        self.arf.entries[arfReg].print()
         return status
 
     def registerUpdate(self, rrfIndex:int, type:str, data:int = None):
@@ -136,15 +132,11 @@ class regfiles:
                         break
 
     def sourceRead(self, arfIndex:int):
-        print("arfReg={} ".format(arfIndex), end='')
-        self.arf.entries[arfIndex].print()
         if self.arf.entries[arfIndex].busy == False: # return data from ARF
-            print("Source Read from ARF")
             return self.arf.entries[arfIndex].data, True
         else:
             rrfIndex = self.arf.entries[arfIndex].tag
             if self.rrf.entries[rrfIndex].valid == True: # return data from RRF
-                print("Source Read from RRF")
                 return self.rrf.entries[rrfIndex].data, True
             else: # forward tag to reservation station
                 return rrfIndex, False

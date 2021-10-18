@@ -17,17 +17,17 @@ class ASU:
         '''
         self.stages = []
         for _ in range(self.latency):
-            temp = fuEntry(-1, None, -1)
+            temp = fuEntry(None, None, None)
             self.stages.extend([temp])
 
-    def shiftAndEval(self, index= -1, opCode= -1, op1=None, op2=None):
+    def shiftAndEval(self, index= None, opCode= None, op1=None, op2=None):
         '''
             Note: If the RS is full, issue a NOP (so that the output value is got)
                   by passing the default values to shiftAndEval()
         '''
         out = self.stages[-1]
         self.stages[1:] = self.stages[0:-1]     # shift (pipelined exec)
-        if (opCode == -1):                      # NOP bubble
+        if (opCode == None):                      # NOP bubble
             regval = None
         else:
             if opCode == 'ADD':
@@ -35,7 +35,7 @@ class ASU:
             elif opCode == 'SUB':
                 regval = op1 - op2
             else:
-                index = -1
+                index = None
                 regval = None
         self.stages[0] = fuEntry(index, regval, opCode)
         return out
@@ -54,23 +54,23 @@ class MU:
         '''
         self.stages = []
         for _ in range(self.latency):
-            temp = fuEntry(-1, None, -1)
+            temp = fuEntry(None, None, None)
             self.stages.extend([temp])
 
-    def shiftAndEval(self, index= -1, opCode= -1, op1=None, op2=None):
+    def shiftAndEval(self, index= None, opCode= None, op1=None, op2=None):
         '''
             Note: If the RS is full, issue a NOP (so that the output value is got)
                   by passing the default values to shiftAndEval()
         '''
         out = self.stages[-1]
         self.stages[1:] = self.stages[0:-1]     # shift (pipelined exec)
-        if (opCode == -1):      # NOP bubble
+        if (opCode == None):                      # NOP bubble
             regval = None
         else:
             if opCode == 'MUL':
-                regval = op1*op2
+                regval = op1 * op2
             else:
-                index = -1
+                index = None
                 regval = None
         self.stages[0] = fuEntry(index, regval, opCode)
         return out
@@ -89,23 +89,23 @@ class DU:
         '''
         self.stages = []
         for _ in range(self.latency):
-            temp = fuEntry(-1, None, -1)
+            temp = fuEntry(None, None, None)
             self.stages.extend([temp])
 
-    def shiftAndEval(self, index= -1, opCode= -1, op1=None, op2=None):
+    def shiftAndEval(self, index= None, opCode= None, op1=None, op2=None):
         '''
             Note: If the RS is full, issue a NOP (so that the output value is got)
                   by passing the default values to shiftAndEval()
         '''
         out = self.stages[-1]
         self.stages[1:] = self.stages[0:-1]     # shift (pipelined exec)
-        if (opCode == -1):      # NOP bubble
+        if (opCode == None):                      # NOP bubble
             regval = None
         else:
             if opCode == 'DIV':
                 regval = op1/op2
             else:
-                index = -1
+                index = None
                 regval = None
         self.stages[0] = fuEntry(index, regval, opCode)
         return out
@@ -117,10 +117,10 @@ class LSU:
     '''
     def __init__(self, latency):
         self.latency = latency
-        self.dict = {'InstrIdx': -1, 'RegVal': None, 'opCode': -1, 'busy': 0}
+        self.dict = {'InstrIdx': None, 'RegVal': None, 'opCode': None, 'busy': 0}
         self.end = None
 
-    def IssueNewOp(self, start, index= -1, opCode= -1, op1=None, op2=None, offset= None):
+    def IssueNewOp(self, start, index= None, opCode= None, op1=None, op2=None, offset= None):
         '''
             Check if FU is busy before calling this Function
             Redundant "if(busy)" added
@@ -128,7 +128,7 @@ class LSU:
         if (self.dict['busy']):
             return 1       # busy, try again in next cycle
         else:
-            if (opCode == -1):      # NOP bubble
+            if (opCode == None):      # NOP bubble
                 regval = None
                 busy = 0
             else:
@@ -143,7 +143,7 @@ class LSU:
                     mem[addr] = op1
                 else:
                     regval = None
-                    index = -1
+                    index = None
                     busy = 0
             self.dict = {'InstrIdx': index, 'RegVal': regval, 'opCode': opCode, 'busy': busy}
             return 0
@@ -153,4 +153,4 @@ class LSU:
             if(clkVal == self.end):
                 self.dict['busy'] = 0
                 return self.dict
-        return {'InstrIdx': -1, 'RegVal': None, 'opCode': -1, 'busy': 0}
+        return {'InstrIdx': None, 'RegVal': None, 'opCode': None, 'busy': 0}
