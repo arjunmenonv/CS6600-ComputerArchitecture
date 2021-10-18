@@ -106,7 +106,7 @@ class DU:
         else:
             if opCode == 'DIV':
                 if op2 != 0:
-                    regval = op1/op2
+                    regval = int(op1/op2)
                 else:
                     regval = int(2e32 - 1)
                     print("Divide by 0 exception! Functional correctness may be affected by this exception.")
