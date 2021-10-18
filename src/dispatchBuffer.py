@@ -124,5 +124,4 @@ def dispatch(instr:instruction, asuRS:reservationStation, muRS:reservationStatio
                 if (valid1 == 1) & (valid2 == 1):
                     ready = True
                 lsuRS.addEntry(instrId, instr.inst, ready, op1, valid1, op2, valid2, offset)
-
         return False
