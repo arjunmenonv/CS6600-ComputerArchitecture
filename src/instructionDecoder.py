@@ -20,4 +20,5 @@ def decode(instr:str):
         instrn = instruction(inst, fu, r1, r2, r3)
         return instrn
     else:
+        print("Invalid instruction")
         sys.exit("Invalid instruction length")
