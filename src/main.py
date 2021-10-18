@@ -104,7 +104,7 @@ if __name__=="__main__":
     while(True):
         clkCount += 1
         endSim = topModule()
-        if(endSim):
+        if(endSim == -1):
             break
 
     print("Number of Cycles elapsed: ", clkCount)
