@@ -1,5 +1,6 @@
 import sys
 from collections import namedtuple
+from memory import exceptions
 
 typeOfRS = {'0001':'ASU', '0010':'ASU', '0011':'MU', '0100':'DU', '0101':'LSU', '0110':'LSU'}
 typeOfInstr = {'0001':'ADD', '0010':'SUB', '0011':'MUL', '0100':'DIV', '0101':'LOD', '0110':'STO'}
@@ -17,6 +18,12 @@ def decode(instr:str):
         r1 = int(instr[4:8], base=2)
         r2 = int(instr[8:12], base=2)
         r3 = int(instr[12:16], base=2)
+        if ((r1 == r2) or (r1 == r3)):
+            err_string = "\n[{}, R{}, R{}, R{}]:\nEXCEPTION: Source and Destination Register are the same; leads to infinite wait state.\nSkipping Instruction"\
+            .format(inst, r1, r2, r3)
+            print(err_string)
+            exceptions.append(err_string)
+            return None                         # NOP Bubble
         instrn = instruction(inst, fu, r1, r2, r3)
         return instrn
     else:

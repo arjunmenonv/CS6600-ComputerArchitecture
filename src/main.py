@@ -45,6 +45,8 @@ def topModule():
             if instructionsDecoded[i] == None:
                 instructionsDecoded[i] = decode(instructionsRaw[progCounter])
                 progCounter+=1
+                if instructionsDecoded[i] == None:
+                    break
                 Decode_count+=1
                 if progCounter == numInstr:
                     break
@@ -165,3 +167,7 @@ if __name__=="__main__":
         clkCount += 1
 
     print("Number of Cycles elapsed: ", clkCount)
+    if exceptions:
+        print("\nThe following EXCEPTIONs were encountered:")
+        for e in exceptions:
+            print(e)

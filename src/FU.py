@@ -1,5 +1,5 @@
 from collections import namedtuple
-from memory import mem
+from memory import mem, exceptions
 
 fuEntry = namedtuple('fuEntry', 'instrId, regVal, opCode')
 
@@ -109,8 +109,10 @@ class DU:
                     regval = int(op1/op2)
                 else:
                     regval = int(2e32 - 1)
-                    print("\nEXCEPTION: Divide by 0 exception! \
-                    \nFunctional correctness may be affected by this exception.\n")
+                    err_string = "\n[DIV, {}, {}]\nEXCEPTION: Divide by 0 exception! \
+                    \nFunctional correctness may be affected by this exception.".format(op1, op2)
+                    print(err_string)
+                    exceptions.append(err_string)
             else:
                 index = None
                 regval = None
