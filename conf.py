@@ -18,5 +18,6 @@ NUM_ARF         = 16
 
 MEM_SIZE        = 128
 
-INS_FILE        = 'test/ins.txt'
+#INS_FILE        = 'test/ins.txt'
 #INS_FILE        = 'test/sample.txt'
+INS_FILE        = 'test/ins1.txt'

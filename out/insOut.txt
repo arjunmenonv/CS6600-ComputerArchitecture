@@ -1,0 +1,158 @@
+------------- Cycle 0 start -------------
+Decoding Instructions...
+Decoded 4 new instructions
+Dispatching Instructions...
+instruction(inst='ADD', fu='ASU', r1=1, r2=2, r3=3)
+instruction(inst='SUB', fu='ASU', r1=4, r2=2, r3=3)
+Dispatched 2 instructions to respective RS
+Issuing instructions to FUs...
+	To ASU: [0, 'ADD', 1, 1]
+	Update RoB from ASU :(issued) index =  0
+Issued 1 non-NOP instructions
+Finishing Instructions...
+Finished 0 instructions
+Forwarding FU outputs: 
+	From ASU: tag = None | data = None
+	From MU:  tag = None | data = None
+	From DU:  tag = None | data = None
+	From LSU: tag = None | data = None
+Committing ROB head...
+Reorder Buffer:	 Head:0	 Tail:2
+------------- Cycle 0 end   -------------
+------------- Cycle 1 start -------------
+Decoding Instructions...
+Decoded 0 new instructions
+Dispatching Instructions...
+instruction(inst='MUL', fu='MU', r1=5, r2=1, r3=4)
+instruction(inst='DIV', fu='DU', r1=6, r2=7, r3=8)
+Dispatched 2 instructions to respective RS
+Issuing instructions to FUs...
+	To ASU: [1, 'SUB', 1, 1]
+	Update RoB from ASU :(issued) index =  1
+	To DU: [3, 'DIV', 1, 1]
+	Update RoB from DU :(issued) index =  3
+Issued 2 non-NOP instructions
+Finishing Instructions...
+	Update RoB from ASU: (finished) index =  0
+Finished 1 instructions
+Forwarding FU outputs: 
+	From ASU: tag = 0 | data = 2
+	From MU:  tag = None | data = None
+	From DU:  tag = None | data = None
+	From LSU: tag = None | data = None
+Committing ROB head...
+	Completed head instruction
+Reorder Buffer:	 Head:1	 Tail:4
+------------- Cycle 1 end   -------------
+------------- Cycle 2 start -------------
+Decoding Instructions...
+Decoded 0 new instructions
+Dispatching Instructions...
+Dispatched 0 instructions to respective RS
+Issuing instructions to FUs...
+Issued 0 non-NOP instructions
+Finishing Instructions...
+	Update RoB from ASU: (finished) index =  1
+Finished 1 instructions
+Forwarding FU outputs: 
+	From ASU: tag = 1 | data = 0
+	From MU:  tag = None | data = None
+	From DU:  tag = None | data = None
+	From LSU: tag = None | data = None
+Committing ROB head...
+	Completed head instruction
+Reorder Buffer:	 Head:2	 Tail:4
+------------- Cycle 2 end   -------------
+------------- Cycle 3 start -------------
+Decoding Instructions...
+Decoded 0 new instructions
+Dispatching Instructions...
+Dispatched 0 instructions to respective RS
+Issuing instructions to FUs...
+	To MU: [2, 'MUL', 2, 0]
+	Update RoB from MU :(issued) index =  2
+Issued 1 non-NOP instructions
+Finishing Instructions...
+Finished 0 instructions
+Forwarding FU outputs: 
+	From ASU: tag = None | data = None
+	From MU:  tag = None | data = None
+	From DU:  tag = None | data = None
+	From LSU: tag = None | data = None
+Committing ROB head...
+Reorder Buffer:	 Head:2	 Tail:4
+------------- Cycle 3 end   -------------
+------------- Cycle 4 start -------------
+Decoding Instructions...
+Decoded 0 new instructions
+Dispatching Instructions...
+Dispatched 0 instructions to respective RS
+Issuing instructions to FUs...
+Issued 0 non-NOP instructions
+Finishing Instructions...
+Finished 0 instructions
+Forwarding FU outputs: 
+	From ASU: tag = None | data = None
+	From MU:  tag = None | data = None
+	From DU:  tag = None | data = None
+	From LSU: tag = None | data = None
+Committing ROB head...
+Reorder Buffer:	 Head:2	 Tail:4
+------------- Cycle 4 end   -------------
+------------- Cycle 5 start -------------
+Decoding Instructions...
+Decoded 0 new instructions
+Dispatching Instructions...
+Dispatched 0 instructions to respective RS
+Issuing instructions to FUs...
+Issued 0 non-NOP instructions
+Finishing Instructions...
+	Update RoB from MU: (finished) index =  2
+	Update RoB from DU: (finished) index =  3
+Finished 2 instructions
+Forwarding FU outputs: 
+	From ASU: tag = None | data = None
+	From MU:  tag = 2 | data = 0
+	From DU:  tag = 3 | data = 1
+	From LSU: tag = None | data = None
+Committing ROB head...
+	Completed head instruction
+Reorder Buffer:	 Head:3	 Tail:4
+------------- Cycle 5 end   -------------
+------------- Cycle 6 start -------------
+Decoding Instructions...
+Decoded 0 new instructions
+Dispatching Instructions...
+Dispatched 0 instructions to respective RS
+Issuing instructions to FUs...
+Issued 0 non-NOP instructions
+Finishing Instructions...
+Finished 0 instructions
+Forwarding FU outputs: 
+	From ASU: tag = None | data = None
+	From MU:  tag = None | data = None
+	From DU:  tag = None | data = None
+	From LSU: tag = None | data = None
+Committing ROB head...
+	Completed head instruction
+Reorder Buffer:	 Head:4	 Tail:4
+------------- Cycle 6 end   -------------
+------------- Cycle 7 start -------------
+Decoding Instructions...
+Decoded 0 new instructions
+Dispatching Instructions...
+Dispatched 0 instructions to respective RS
+Issuing instructions to FUs...
+Issued 0 non-NOP instructions
+Finishing Instructions...
+Finished 0 instructions
+Forwarding FU outputs: 
+	From ASU: tag = None | data = None
+	From MU:  tag = None | data = None
+	From DU:  tag = None | data = None
+	From LSU: tag = None | data = None
+Committing ROB head...
+	No instruction left to complete
+Reorder Buffer:	 Head:4	 Tail:4
+------------- Cycle 7 end   -------------
+Number of Cycles elapsed:  7
