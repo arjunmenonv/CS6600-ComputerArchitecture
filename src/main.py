@@ -47,7 +47,8 @@ def topModule():
                 progCounter+=1
                 if progCounter == numInstr:
                     break
-    while((Dispatch_count <= ISSUE_WIDTH) & (instructionsDecoded[0] != None)):
+    while((Dispatch_count < ISSUE_WIDTH) & (instructionsDecoded[0] != None)):
+        print(instructionsDecoded[0])
         stall = dispatch(instructionsDecoded[0], asuRS, muRS, duRS, lsuRS, RF, RoB)
         if stall:
             print("Dispatch Stalled")
@@ -106,7 +107,6 @@ def topModule():
          RF.registerUpdate(tag, 'finish', val)
     #commit if any instr is completed
     commitRRFtag = RoB.complete()
-    print(commitRRFtag)
     if ((commitRRFtag != -1) and (commitRRFtag != -2)):
         RF.registerUpdate(commitRRFtag, 'complete')   # third arg isnt used during commiting
     return commitRRFtag
@@ -116,10 +116,9 @@ if __name__=="__main__":
         instructionsRaw = f.read().splitlines()
     numInstr = len(instructionsRaw)
     while(True):
-        clkCount += 1
         endSim = topModule()
-        print(clkCount)
         if(endSim==-1):
             break
+        clkCount += 1
 
     print("Number of Cycles elapsed: ", clkCount)

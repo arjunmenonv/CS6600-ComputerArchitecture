@@ -35,7 +35,9 @@ class LSrsEntry:
 
 class reservationStation:
     def __init__(self, numEntries):
-        self.entries = [reservationStationEntry()]*numEntries
+        self.entries = []
+        for _ in range(numEntries):
+            self.entries.extend([reservationStationEntry()])
 
     def isFull(self):
         for entry in self.entries:
@@ -84,6 +86,7 @@ class reservationStation:
                 nextInstrOp2 = entry.op2
                 index = i
                 break
+        print("putIntoFU index: {}".format(index))
         if index != None:
             self.entries[index:-1] = self.entries[index+1:]
             self.entries[-1] = reservationStationEntry()
@@ -92,7 +95,9 @@ class reservationStation:
 
 class LSreservationStation:
     def __init__(self, numEntries):
-        self.entries = [LSrsEntry()]*numEntries
+        self.entries = []
+        for _ in range(numEntries):
+            self.entries.extend([LSrsEntry()])
 
     def isFull(self):
         for entry in self.entries:
