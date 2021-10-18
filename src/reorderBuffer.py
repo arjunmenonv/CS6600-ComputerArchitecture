@@ -50,7 +50,7 @@ class roBuffer:
         self.full = 0
         if ((self.tail - self.head)%self.len == self.len - 1):
             self.full = 1
-        elif (self.tail == self.head):
+        elif (self.tail  == self.head):
             self.empty = 1
 
     def insertEntry(self, rrfTag):
@@ -59,12 +59,13 @@ class roBuffer:
         call updateState() before calling this function and stall if ROBuffer is full,
         else carry on
         '''
-        self.tail = (self.tail + 1)%self.len
         self.entries[self.tail].busy = 1
         self.entries[self.tail].issued = 0
         self.entries[self.tail].finished = 0
         self.entries[self.tail].renameReg = rrfTag
-        return self.tail        # save this as InstrIdx in RS
+        tailIdx = self.tail
+        self.tail = (self.tail + 1)%self.len
+        return tailIdx        # save this as InstrIdx in RS
 
     def complete(self):
         self.updateState()
