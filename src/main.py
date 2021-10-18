@@ -64,25 +64,26 @@ def topModule():
     MUarg = muRS.putIntoFU()
     print("put into FU from DU :", end='')
     DUarg = duRS.putIntoFU()
-    print("put into FU from LSU :", end='')
+    print("put into FU from LSU :", end='\n')
     LSUarg = lsuRS.putIntoFU(lsuFU)
     # pass args to FUs
-    if (ASUarg != [None, None, None, None]):
+    if (ASUarg[0] != None):
         print(ASUarg)
         print("update RoB from ASU :", end='')
         RoB.updateEntry("issued", ASUarg[0])
-    if (MUarg != [None, None, None, None]):
+    if (MUarg[0] != None):
         print(MUarg)
         print("update RoB from MU :", end='')
         RoB.updateEntry("issued", MUarg[0])
-    if (DUarg != [None, None, None, None]):
+    if (DUarg[0] != None):
         print(DUarg)
         print("update RoB from DU :", end='')
         RoB.updateEntry("issued", DUarg[0])
     ASUout = asuFU.shiftAndEval(*ASUarg)
     MUout = muFU.shiftAndEval(*MUarg)
     DUout = duFU.shiftAndEval(*DUarg)
-    if (LSUarg != [None, None, None, None, None]) and (LSUarg != None):
+    if (LSUarg[0] != None):
+        print(LSUarg)
         print("update RoB from LSU :", end='')
         lsuFU.IssueNewOp(clkCount, *LSUarg)
         RoB.updateEntry("issued", LSUarg[0])
@@ -120,6 +121,7 @@ def topModule():
     commitRRFtag = RoB.complete()
     if ((commitRRFtag != -1) and (commitRRFtag != -2)):
         RF.registerUpdate(commitRRFtag, 'complete')   # third arg isnt used during commiting
+        print("Completed head instruction")
     return commitRRFtag
 
 if __name__=="__main__":
@@ -127,11 +129,13 @@ if __name__=="__main__":
         instructionsRaw = f.read().splitlines()
     numInstr = len(instructionsRaw)
     while(True):
+    #for i in range(30):
         print("Cycle {}".format(clkCount))
         endSim = topModule()
         if(endSim==-1):
             break
         clkCount += 1
+        print("Reorder Buffer:\t Head:{}\t Tail:{}".format(RoB.head, RoB.tail))
         print("------------- Cycle over -------------")
 
     print("Number of Cycles elapsed: ", clkCount)
