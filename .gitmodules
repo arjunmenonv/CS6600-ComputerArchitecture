@@ -1,0 +1,3 @@
+[submodule "DynamicExecCore"]
+	path = DynamicExecCore
+	url = https://github.com/aklsh/DynamicExecCore.git
