@@ -13,40 +13,49 @@ def dispatch(instr:instruction, asuRS:reservationStation, muRS:reservationStatio
     rrfFull = False
     rob.updateState()
     if rob.full:
+        print("RoB is Full")
         robFull = True
         return True
     else:
         if instr.fu == "ASU":
             destReg = instr.r1
             if asuRS.isFull():
+                print("RS is Full")
                 rsFull = True
                 return True
             if regfiles.destinationAllocate(destReg) == False:
+                print("RRF is Full")
                 rrfFull = True
                 return True
         elif instr.fu == "MU":
             destReg = instr.r1
             if muRS.isFull():
+                print("RS is Full")
                 rsFull = True
                 return True
             if regfiles.destinationAllocate(destReg) == False:
+                print("RRF is Full")
                 rrfFull = True
                 return True
         elif instr.fu == "DU":
             destReg = instr.r1
             if duRS.isFull():
+                print("RS is Full")
                 rsFull = True
                 return True
             if regfiles.destinationAllocate(destReg) == False:
+                print("RRF is Full")
                 rrfFull = True
                 return True
         elif instr.fu == "LSU":
             if lsuRS.isFull():
+                print("RS is Full")
                 rsFull = True
                 return True
             if instr.inst == "LOD":
                 destReg = instr.r1
                 if regfiles.destinationAllocate(destReg) == False:
+                    print("RRF is Full")
                     rrfFull = True
                     return True
 

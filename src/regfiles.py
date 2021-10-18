@@ -111,17 +111,18 @@ class regfiles:
                 return True
         return False
 
-    def registerUpdate(self, rrfIndex:int, type:str, data:int):
-        if type=='finish': # Update data from FU in RRF
-            self.rrf.entries[rrfIndex].data = data
-            self.rrf.entries[rrfIndex].valid = True
-        elif type=='complete': # Update from RRF to ARF and deallocate RRF and ARF
-            for entry in self.arf.entries:
-                if entry.tag == rrfIndex:
-                    entry.data = self.rrf.entries[rrfIndex].data
-                    entry.busy = False
-                    self.rrf.entries[rrfIndex].busy = False
-                    break
+    def registerUpdate(self, rrfIndex:int, type:str, data:int = None):
+        if rrfIndex != None:
+            if type=='finish': # Update data from FU in RRF
+                self.rrf.entries[rrfIndex].data = data
+                self.rrf.entries[rrfIndex].valid = True
+            elif type=='complete': # Update from RRF to ARF and deallocate RRF and ARF
+                for entry in self.arf.entries:
+                    if entry.tag == rrfIndex:
+                        entry.data = self.rrf.entries[rrfIndex].data
+                        entry.busy = False
+                        self.rrf.entries[rrfIndex].busy = False
+                        break
 
     def sourceRead(self, arfIndex:int):
         if self.arf.entries[arfIndex].busy == False: # return data from ARF

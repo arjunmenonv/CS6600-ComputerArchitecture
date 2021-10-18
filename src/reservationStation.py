@@ -38,10 +38,10 @@ class reservationStation:
         self.entries = [reservationStationEntry()]*numEntries
 
     def isFull(self):
-        for i, entry in enumerate(self.entries):
+        for entry in self.entries:
             if entry.id == None:
-                return False, i
-        return True, None
+                return False
+        return True
 
     def addEntry(self, id, opcode, ready, op1, valid1, op2, valid2):
         for entry in self.entries:
@@ -95,10 +95,10 @@ class LSreservationStation:
         self.entries = [LSrsEntry()]*numEntries
 
     def isFull(self):
-        for i, entry in enumerate(self.entries):
+        for entry in self.entries:
             if entry.id == None:
-                return False, i
-        return True, None
+                return False
+        return True
 
     def addEntry(self, id, opcode, ready, op1, valid1, op2, valid2, offset):
         for entry in self.entries:
