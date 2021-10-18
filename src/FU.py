@@ -25,7 +25,7 @@ class ASU:
             Note: If the RS is full, issue a NOP (so that the output value is got)
                   by passing the default values to shiftAndEval()
         '''
-        out = self.stages[-1]
+        #out = self.stages[-1]
         self.stages[1:] = self.stages[0:-1]     # shift (pipelined exec)
         if (opCode == None):                      # NOP bubble
             regval = None
@@ -38,6 +38,7 @@ class ASU:
                 index = None
                 regval = None
         self.stages[0] = fuEntry(index, regval, opCode)
+        out = self.stages[-1]
         return out
 
 class MU:
@@ -62,7 +63,7 @@ class MU:
             Note: If the RS is full, issue a NOP (so that the output value is got)
                   by passing the default values to shiftAndEval()
         '''
-        out = self.stages[-1]
+        #out = self.stages[-1]
         self.stages[1:] = self.stages[0:-1]     # shift (pipelined exec)
         if (opCode == None):                      # NOP bubble
             regval = None
@@ -73,6 +74,7 @@ class MU:
                 index = None
                 regval = None
         self.stages[0] = fuEntry(index, regval, opCode)
+        out = self.stages[-1]
         return out
 
 class DU:
@@ -97,7 +99,7 @@ class DU:
             Note: If the RS is full, issue a NOP (so that the output value is got)
                   by passing the default values to shiftAndEval()
         '''
-        out = self.stages[-1]
+        #out = self.stages[-1]
         self.stages[1:] = self.stages[0:-1]     # shift (pipelined exec)
         if (opCode == None):                      # NOP bubble
             regval = None
@@ -112,6 +114,7 @@ class DU:
                 index = None
                 regval = None
         self.stages[0] = fuEntry(index, regval, opCode)
+        out = self.stages[-1]
         return out
 
 class LSU:
@@ -137,7 +140,7 @@ class LSU:
                 busy = 0
             else:
                 busy = 1
-                self.end = start + self.latency
+                self.end = start + self.latency - 1     # including current cycle
                 if opCode == 'LOD':
                     addr = (op2 + offset)%len(mem)
                     regval = mem[addr]
