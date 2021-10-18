@@ -70,7 +70,7 @@ class roBuffer:
     def complete(self):
         self.updateState()
         if self.empty:
-            print("No instruction left to complete")
+            print("\tNo instruction left to complete")
             return -1
         else:
             if(self.entries[self.head].finished):
@@ -88,9 +88,9 @@ class roBuffer:
             return
         else:
             if (type == "issued"):
-                print("In updateEntry() (issued) index= ", index)
+                print("(issued) index = ", index)
                 self.entries[index].issued = 1
             elif (type == "finished"):
-                print("In updateEntry() (finished) index= ", index)
+                print("(finished) index = ", index)
                 self.entries[index].finished = 1
             return
