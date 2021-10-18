@@ -9,10 +9,10 @@ DECODE_MAX      = 16
 ISSUE_WIDTH     = 2
 
 NUM_ROB         = 128
-NUM_RSE_ASU     = 4
+NUM_RSE_ASU     = 3
 NUM_RSE_MU      = 2
 NUM_RSE_DU      = 2
-NUM_RSE_LSU     = 2
+NUM_RSE_LSU     = 3
 NUM_RRF         = 16
 NUM_ARF         = 16
 

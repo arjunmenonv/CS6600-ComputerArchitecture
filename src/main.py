@@ -58,21 +58,32 @@ def topModule():
             instructionsDecoded[0:-1] = instructionsDecoded[1:]
             instructionsDecoded[-1] = None
     print("Finished dispatching")
+    print("put into FU from ASU :", end='')
     ASUarg = asuRS.putIntoFU()
+    print("put into FU from MU :", end='')
     MUarg = muRS.putIntoFU()
+    print("put into FU from DU :", end='')
     DUarg = duRS.putIntoFU()
+    print("put into FU from LSU :", end='')
     LSUarg = lsuRS.putIntoFU(lsuFU)
     # pass args to FUs
-    if (ASUarg != [-1, -1, None, None]):
+    if (ASUarg != [None, None, None, None]):
+        print(ASUarg)
+        print("update RoB from ASU :", end='')
         RoB.updateEntry("issued", ASUarg[0])
-    if (MUarg != [-1, -1, None, None]):
+    if (MUarg != [None, None, None, None]):
+        print(MUarg)
+        print("update RoB from MU :", end='')
         RoB.updateEntry("issued", MUarg[0])
-    if (DUarg != [-1, -1, None, None]):
+    if (DUarg != [None, None, None, None]):
+        print(DUarg)
+        print("update RoB from DU :", end='')
         RoB.updateEntry("issued", DUarg[0])
     ASUout = asuFU.shiftAndEval(*ASUarg)
     MUout = muFU.shiftAndEval(*MUarg)
     DUout = duFU.shiftAndEval(*DUarg)
-    if (LSUarg != [-1, -1, None, None, None]) or (LSUarg != None):
+    if (LSUarg != [None, None, None, None, None]) and (LSUarg != None):
+        print("update RoB from LSU :", end='')
         lsuFU.IssueNewOp(clkCount, *LSUarg)
         RoB.updateEntry("issued", LSUarg[0])
     LSUout = lsuFU.pollLSU(clkCount)
@@ -85,16 +96,16 @@ def topModule():
     DUval = DUout.regVal
     LSUtag = None
     LSUval = LSUout['RegVal']
-    if (ASUout.instrId != -1):
+    if (ASUout.instrId != None):
         RoB.updateEntry("finished", ASUout.instrId)
         ASUtag = RoB.entries[ASUout.instrId].renameReg
-    if (MUout.instrId != -1):
+    if (MUout.instrId != None):
         RoB.updateEntry("finished", MUout.instrId)
         MUtag = RoB.entries[MUout.instrId].renameReg
-    if (DUout.instrId != -1):
+    if (DUout.instrId != None):
         RoB.updateEntry("finished", DUout.instrId)
         DUtag = RoB.entries[DUout.instrId].renameReg
-    if (LSUout['InstrIdx'] != -1):
+    if (LSUout['InstrIdx'] != None):
         RoB.updateEntry("finished", LSUout['InstrIdx'])
         LSUtag = RoB.entries[LSUout['InstrIdx']].renameReg
     fwdList = [[ASUtag, ASUval], [MUtag, MUval], [DUtag, DUval], [LSUtag, LSUval]]
@@ -116,9 +127,11 @@ if __name__=="__main__":
         instructionsRaw = f.read().splitlines()
     numInstr = len(instructionsRaw)
     while(True):
+        print("Cycle {}".format(clkCount))
         endSim = topModule()
         if(endSim==-1):
             break
         clkCount += 1
+        print("------------- Cycle over -------------")
 
     print("Number of Cycles elapsed: ", clkCount)
