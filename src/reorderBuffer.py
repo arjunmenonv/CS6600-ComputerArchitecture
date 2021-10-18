@@ -78,7 +78,7 @@ class roBuffer:
             else:
                 return -2           # head instr isnt finished
 
-    def updateEntry(self, type:str, index:int):
+    def updateEntry(self, type:str, index):
         self.updateState()
         if self.empty:
             print("Reorder Buffer is empty")
