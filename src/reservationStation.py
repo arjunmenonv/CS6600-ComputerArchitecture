@@ -73,8 +73,8 @@ class reservationStation:
         return
 
     def putIntoFU(self):
-        nextInstrId = -1
-        nextInstrOpcode = -1
+        nextInstrId = None
+        nextInstrOpcode = None
         nextInstrOp1 = None
         nextInstrOp2 = None
         index = None
@@ -86,7 +86,7 @@ class reservationStation:
                 nextInstrOp2 = entry.op2
                 index = i
                 break
-        print("putIntoFU index: {}".format(index))
+        print("putIntoFU index of RSentries: {}".format(index))
         if index != None:
             self.entries[index:-1] = self.entries[index+1:]
             self.entries[-1] = reservationStationEntry()
@@ -134,8 +134,8 @@ class LSreservationStation:
         return
 
     def putIntoFU(self, LSUobject):
-        nextInstrId = -1
-        nextInstrOpcode = -1
+        nextInstrId = None
+        nextInstrOpcode = None
         nextInstrOp1 = None
         nextInstrOp2 = None
         nextInstrOffset = None
@@ -150,4 +150,7 @@ class LSreservationStation:
                 nextInstrOffset = self.entries[0].offset
                 self.entries[:-1] = self.entries[1:]
                 self.entries[-1] = LSrsEntry()
+                print("putIntoFU index of RSentries: {}".format(0))
+            else:
+                print("putIntoFU index of RSentries: None")
             return [nextInstrId, nextInstrOpcode, nextInstrOp1, nextInstrOp2, nextInstrOffset]
