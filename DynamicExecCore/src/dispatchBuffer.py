@@ -12,41 +12,70 @@ def dispatch(instr:instruction, asuRS:reservationStation, muRS:reservationStatio
     rsFull = False
     rrfFull = False
     rob.updateState()
+    index, entry = regfiles.getFreeIdx()
     if rob.full:
         print("RoB is Full")
         robFull = True
         return True
+    elif (index == None):
+        print("RRF is Full")
+        rrfFull = True
+        return True
     else:
         if instr.fu == "ASU":
-            destReg = instr.r1
             if asuRS.isFull():
                 print("RS is Full")
                 rsFull = True
                 return True
-            if regfiles.destinationAllocate(destReg) == False:
-                print("RRF is Full")
-                rrfFull = True
-                return True
-        elif instr.fu == "MU":
             destReg = instr.r1
+            source1Reg = instr.r2
+            source2Reg = instr.r3
+            ready = False
+            op1, valid1 = regfiles.sourceRead(source1Reg)
+            op2, valid2 = regfiles.sourceRead(source2Reg)
+            regfiles.destinationAllocate(index, entry, destReg)
+            if (valid1 == 1) & (valid2 == 1):
+                ready = True
+            rrfTag = regfiles.arf.entries[destReg].tag
+            instrId = rob.insertEntry(rrfTag)
+            asuRS.addEntry(instrId, instr.inst, ready, op1, valid1, op2, valid2)
+
+        elif instr.fu == "MU":
             if muRS.isFull():
                 print("RS is Full")
                 rsFull = True
                 return True
-            if regfiles.destinationAllocate(destReg) == False:
-                print("RRF is Full")
-                rrfFull = True
-                return True
-        elif instr.fu == "DU":
             destReg = instr.r1
+            source1Reg = instr.r2
+            source2Reg = instr.r3
+            ready = False
+            op1, valid1 = regfiles.sourceRead(source1Reg)
+            op2, valid2 = regfiles.sourceRead(source2Reg)
+            regfiles.destinationAllocate(index, entry, destReg)
+            if (valid1 == 1) & (valid2 == 1):
+                ready = True
+            rrfTag = regfiles.arf.entries[destReg].tag
+            instrId = rob.insertEntry(rrfTag)
+            muRS.addEntry(instrId, instr.inst, ready, op1, valid1, op2, valid2)
+
+        elif instr.fu == "DU":
             if duRS.isFull():
                 print("RS is Full")
                 rsFull = True
                 return True
-            if regfiles.destinationAllocate(destReg) == False:
-                print("RRF is Full")
-                rrfFull = True
-                return True
+            destReg = instr.r1
+            source1Reg = instr.r2
+            source2Reg = instr.r3
+            ready = False
+            op1, valid1 = regfiles.sourceRead(source1Reg)
+            op2, valid2 = regfiles.sourceRead(source2Reg)
+            regfiles.destinationAllocate(index, entry, destReg)
+            if (valid1 == 1) & (valid2 == 1):
+                ready = True
+            rrfTag = regfiles.arf.entries[destReg].tag
+            instrId = rob.insertEntry(rrfTag)
+            duRS.addEntry(instrId, instr.inst, ready, op1, valid1, op2, valid2)
+
         elif instr.fu == "LSU":
             if lsuRS.isFull():
                 print("RS is Full")
@@ -54,74 +83,27 @@ def dispatch(instr:instruction, asuRS:reservationStation, muRS:reservationStatio
                 return True
             if instr.inst == "LOD":
                 destReg = instr.r1
-                if regfiles.destinationAllocate(destReg) == False:
-                    print("RRF is Full")
-                    rrfFull = True
-                    return True
-
-    if (robFull == False) & (rsFull == False) & (rrfFull == False):
-        if instr.fu == "ASU":
-            destReg = instr.r1
-            source1Reg = instr.r2
-            source2Reg = instr.r3
-            ready = False
-            rrfTag = regfiles.arf.entries[destReg].tag
-            instrId = rob.insertEntry(rrfTag)
-            op1, valid1 = regfiles.sourceRead(source1Reg)
-            op2, valid2 = regfiles.sourceRead(source2Reg)
-            if (valid1 == 1) & (valid2 == 1):
-                ready = True
-            asuRS.addEntry(instrId, instr.inst, ready, op1, valid1, op2, valid2)
-
-        elif instr.fu == "MU":
-            destReg = instr.r1
-            source1Reg = instr.r2
-            source2Reg = instr.r3
-            ready = False
-            rrfTag = regfiles.arf.entries[destReg].tag
-            instrId = rob.insertEntry(rrfTag)
-            op1, valid1 = regfiles.sourceRead(source1Reg)
-            op2, valid2 = regfiles.sourceRead(source2Reg)
-            if (valid1 == 1) & (valid2 == 1):
-                ready = True
-            muRS.addEntry(instrId, instr.inst, ready, op1, valid1, op2, valid2)
-
-        elif instr.fu == "DU":
-            destReg = instr.r1
-            source1Reg = instr.r2
-            source2Reg = instr.r3
-            ready = False
-            rrfTag = regfiles.arf.entries[destReg].tag
-            instrId = rob.insertEntry(rrfTag)
-            op1, valid1 = regfiles.sourceRead(source1Reg)
-            op2, valid2 = regfiles.sourceRead(source2Reg)
-            if (valid1 == 1) & (valid2 == 1):
-                ready = True
-            duRS.addEntry(instrId, instr.inst, ready, op1, valid1, op2, valid2)
-
-        elif instr.fu == "LSU":
-            if instr.inst == "LOD":
-                destReg = instr.r1
-                rrfTag = regfiles.arf.entries[destReg].tag
                 sourceReg = instr.r2
                 offset = instr.r3
                 ready = False
-                instrId = rob.insertEntry(rrfTag)
                 op1, valid1 = None, True
                 op2, valid2 = regfiles.sourceRead(sourceReg)
+                regfiles.destinationAllocate(index, entry, destReg)
                 if (valid1 == 1) & (valid2 == 1):
                     ready = True
+                rrfTag = regfiles.arf.entries[destReg].tag
+                instrId = rob.insertEntry(rrfTag)
                 lsuRS.addEntry(instrId, instr.inst, ready, op1, valid1, op2, valid2, offset)
             elif instr.inst == "STO":
-                rrfTag = None
                 source1Reg = instr.r1
                 source2Reg = instr.r2
                 offset = instr.r3
                 ready = False
-                instrId = rob.insertEntry(rrfTag)
                 op1, valid1 = regfiles.sourceRead(source1Reg)
                 op2, valid2 = regfiles.sourceRead(source2Reg)
                 if (valid1 == 1) & (valid2 == 1):
                     ready = True
+                rrfTag = None
+                instrId = rob.insertEntry(rrfTag)
                 lsuRS.addEntry(instrId, instr.inst, ready, op1, valid1, op2, valid2, offset)
-        return False
+    return False

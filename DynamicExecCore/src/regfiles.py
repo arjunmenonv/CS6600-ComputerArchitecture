@@ -106,17 +106,21 @@ class regfiles:
         self.rrf = rrf(numEntriesRRF)
         self.arf = arf(numEntriesARF)
 
-    def destinationAllocate(self, arfReg:int):
-        status = False
+    def getFreeIdx(self):
         for index, entry in enumerate(self.rrf.entries):
             if entry.busy == False: # RRF entry is free. Allocate this
-                entry.busy = True
-                entry.valid = False
-                self.arf.entries[arfReg].busy = True
-                self.arf.entries[arfReg].tag = index
-                status = True
-                break
-        return status
+                return index, entry
+        return None, None
+
+    def destinationAllocate(self, index:int, entry:rrfEntry, arfReg:int):
+        if entry.busy == True:          # sanity check
+            print("Exception; destination allocation failed, exiting")
+            exit()
+        else:
+            entry.busy = True
+            entry.valid = False
+            self.arf.entries[arfReg].busy = True
+            self.arf.entries[arfReg].tag = index
 
     def registerUpdate(self, rrfIndex:int, type:str, data:int = None):
         if rrfIndex != None:
