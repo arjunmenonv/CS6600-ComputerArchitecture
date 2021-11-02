@@ -1,9 +1,11 @@
 # CS6600-ComputerArchitecture
 
-Assignments involving modelling and analysis of components of a modern computer from the graduate level Computer Architecture Course at IIT Madras (Fall 2021). 
+Assignments involving modelling and analysis of components of a modern computer, done as a part of the graduate level Computer Architecture Course at IIT Madras (Fall 2021). 
 This work was done in collaboration with [Akilesh Kannan](https://github.com/aklsh)
 - [CacheParamEst](https://github.com/arjunmenonv/CS6600-ComputerArchitecture/tree/main/CacheParamEst): Reverse Engineering the Block Size and Associativity of 
 L1 Cache of a desktop PC by observing the variation in access latency. 
+
+- [SimCache](https://github.com/arjunmenonv/CS6600-ComputerArchitecture/tree/main/SimCache): Python-based Simulator of a Uniprocessor cache supporting Direct Mapped, Fully Associative and Set-Associative configurations. Includes implementation of Random, LRU and Pseudo-LRU replacement algorithms.
 
 - [AdapPageManage](https://github.com/arjunmenonv/CS6600-ComputerArchitecture/tree/main/AdapPageManage): Implementation of Hybrid Row Buffer Management for DRAMs 
 by extending the command scheduler offered by the [USIMM](http://utaharch.blogspot.com/2012/02/usimm.html) DRAM simulator
